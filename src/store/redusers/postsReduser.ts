@@ -167,6 +167,7 @@ export const loadUserLikedPosts = createAsyncThunk<
     .eq("user_id", userId)
     .range(offset, offset + limit - 1)
     .order("created_at", { ascending: false });
+
   if (error) return rejectWithValue(mapAuthError(error));
   if (!data) return [];
 
@@ -174,7 +175,9 @@ export const loadUserLikedPosts = createAsyncThunk<
     const post = item.post as unknown as PostInterface;
     return {
       ...post,
-      viewed_by_user: userId ? post.viewed_by_user : false,
+      viewed_by_user: userId
+        ? item.post[0].viewed_by_user.some((view) => view.user_id === userId)
+        : false,
       liked_by_user: true,
       user: post.user,
     };

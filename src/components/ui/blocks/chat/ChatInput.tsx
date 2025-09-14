@@ -16,7 +16,7 @@ export default function ChatInput({ handleNewMessage, message, setMessage }: Cha
   };
 
   return (
-    <div className='flex flex-col max-w-[768px] mx-auto w-full'>
+    <div className='flex flex-col w-full'>
       <div className='relative w-full '>
         <input
           value={message}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import Post from "./Post";
 import { useAppSelector } from "@/store/hooks";
 import { loadPosts } from "@/store/redusers/postsReduser";
@@ -15,10 +15,6 @@ export default function Posts() {
   const loadMore = () => {
     if (offset !== null) return loadPosts({ userId: user?.id, offset });
   };
-
-  useEffect(() => {
-    console.log(posts);
-  }, [posts]);
 
   return (
     <RenderWithInfinityData loading={postLoading || loading} callback={() => loadMore()}>

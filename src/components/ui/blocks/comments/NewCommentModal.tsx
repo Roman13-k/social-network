@@ -5,6 +5,7 @@ import { Button } from "../../shared/buttons/button";
 import { useAppSelector } from "@/store/hooks";
 import P from "../../shared/text/P";
 import { H4 } from "../../shared/text/H";
+import EmojiButtonComponent from "../../shared/buttons/EmojiButtonComponent";
 
 export default function NewCommentModal({
   setCommentModal,
@@ -20,13 +21,20 @@ export default function NewCommentModal({
   return (
     <ModalContainer onClose={() => setCommentModal(false)}>
       <H4>Сomment on this</H4>
-      <Textarea
-        className='resize min-w-[200px] border-border border rounded-md p-2'
-        value={content}
-        onChange={(e) => setContent(e.currentTarget.value)}
-        maxChars={400}
-        onValidateError={(err) => setContentError(err)}
-      />
+      <div className='flex w-full pr-2 md:pr-0 md:gap-1 items-start'>
+        <Textarea
+          className='resize min-w-[200px] border-border border rounded-md p-2'
+          value={content}
+          onChange={(e) => setContent(e.currentTarget.value)}
+          maxChars={400}
+          onValidateError={(err) => setContentError(err)}
+        />
+        <EmojiButtonComponent
+          className='top-12 -left-64 lg:-top-20 lg:left-8'
+          setContent={setContent}
+        />
+      </div>
+
       {error && <P variant={"error"}>{error.message}</P>}
       <Button
         className='w-[130px] flex justify-center items-center gap-2'

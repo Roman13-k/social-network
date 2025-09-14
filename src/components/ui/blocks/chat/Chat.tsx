@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabaseClient";
 import Messages from "./messages/Messages";
 import { usePathname } from "next/navigation";
 import ChatInput from "./ChatInput";
+import EmojiButtonComponent from "../../shared/buttons/EmojiButtonComponent";
 
 export default function Chat() {
   const path = usePathname();
@@ -75,7 +76,14 @@ export default function Chat() {
         isToBootom={isToBootom}
         setIsToBottom={setIsToBottom}
       />
-      <ChatInput handleNewMessage={handleNewMessage} message={message} setMessage={setMessage} />
+      <div className='flex w-full items-center gap-2 max-w-[768px] mx-auto'>
+        <ChatInput handleNewMessage={handleNewMessage} message={message} setMessage={setMessage} />
+        <EmojiButtonComponent
+          className='-top-84 -left-70 md:-left-70 lg:-left-50'
+          color='#1da1f2'
+          setContent={setMessage}
+        />
+      </div>
     </ChatContainer>
   );
 }
