@@ -9,6 +9,7 @@ import Messages from "./messages/Messages";
 import { usePathname } from "next/navigation";
 import ChatInput from "./ChatInput";
 import EmojiButtonComponent from "../../shared/buttons/EmojiButtonComponent";
+import ChatHeader from "./ChatHeader";
 
 export default function Chat() {
   const path = usePathname();
@@ -70,6 +71,7 @@ export default function Chat() {
     <ChatContainer
       wrapper={`${activeChat ? "flex" : "hidden"} lg:flex justify-center w-full min-w-0`}
       className='min-w-0 w-full'>
+      <ChatHeader activeChat={activeChat} />
       <Messages
         userId={userId}
         chatId={activeChat?.id}

@@ -61,7 +61,7 @@ export default function Messages({ userId, chatId, isToBootom, setIsToBottom }: 
 
   const messagesList = useMemo(() => {
     let lastDate = "";
-    
+
     return (
       <ul className='flex flex-col items-center gap-2 py-5 max-w-[768px] w-full mx-auto min-w-0'>
         {messages.map((message) => {
@@ -109,7 +109,7 @@ export default function Messages({ userId, chatId, isToBootom, setIsToBottom }: 
   return (
     <div
       ref={messagesRef}
-      className='h-full flex-1 min-h-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200'>
+      className='h-full flex-1 min-h-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200 px-3 md:px-6 lg:px-8'>
       {error ? (
         <P className='text-center' variant={"error"}>
           {error.message}

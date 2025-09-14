@@ -24,7 +24,8 @@ export default function SelectedData({ selectedVariant }: { selectedVariant: Dat
       return loadUserPosts({ userId, offset: userOffset });
     } else if (selectedVariant === "likedPosts" && userLikedOffset !== null) {
       return loadUserLikedPosts({ userId, offset: userLikedOffset });
-    } else if (offset !== null) return loadUserComments({ userId, offset });
+    } else if (offset !== null && selectedVariant == "comments")
+      return loadUserComments({ userId, offset });
   };
 
   useEffect(() => {
@@ -33,6 +34,10 @@ export default function SelectedData({ selectedVariant }: { selectedVariant: Dat
     };
   }, [dispatch]);
 
+  useEffect(() => {
+    console.log(userLikedPosts);
+  }, [userLikedPosts]);
+
   return (
     <RenderWithInfinityData
       callback={loadData}
@@ -40,29 +45,29 @@ export default function SelectedData({ selectedVariant }: { selectedVariant: Dat
         selectedVariant === "posts" || selectedVariant === "likedPosts" ? loading : commentsLoading
       }>
       <ul className='flex flex-col items-center gap-3 md:gap-5 w-full'>
-        {selectedVariant === "posts" ? (
-          userPosts.length > 0 ? (
-            userPosts.map((post) => <Post key={post.id} post={post} type='userPosts' />)
-          ) : (
-            <li>
-              <P variant={"secondary"}>No posts</P>
-            </li>
-          )
-        ) : selectedVariant === "likedPosts" ? (
-          userLikedPosts.length > 0 ? (
-            userLikedPosts.map((post) => <Post key={post.id} post={post} type='userLikedPosts' />)
-          ) : (
-            <li>
-              <P variant={"secondary"}>No liked posts</P>
-            </li>
-          )
-        ) : comments.length > 0 ? (
-          comments.map((com) => <Comment comment={com} key={com.id} />)
-        ) : (
-          <li>
-            <P variant={"secondary"}>No comments</P>
-          </li>
-        )}
+        {selectedVariant === "posts"
+          ? userPosts.length > 0
+            ? userPosts.map((post) => <Post key={post.id} post={post} type='userPosts' />)
+            : !loading && (
+                <li>
+                  <P variant={"secondary"}>No posts</P>
+                </li>
+              )
+          : selectedVariant === "likedPosts"
+          ? userLikedPosts.length > 0
+            ? userLikedPosts.map((post) => <Post key={post.id} post={post} type='userLikedPosts' />)
+            : !loading && (
+                <li>
+                  <P variant={"secondary"}>No liked posts</P>
+                </li>
+              )
+          : comments.length > 0
+          ? comments.map((com) => <Comment comment={com} key={com.id} />)
+          : !commentsLoading && (
+              <li>
+                <P variant={"secondary"}>No comments</P>
+              </li>
+            )}
       </ul>
 
       <ul className='flex flex-col gap-3 md:gap-5 w-full max-w-[650px]'>

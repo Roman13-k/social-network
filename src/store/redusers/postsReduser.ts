@@ -175,9 +175,7 @@ export const loadUserLikedPosts = createAsyncThunk<
     const post = item.post as unknown as PostInterface;
     return {
       ...post,
-      viewed_by_user: userId
-        ? item.post[0].viewed_by_user.some((view) => view.user_id === userId)
-        : false,
+      viewed_by_user: true,
       liked_by_user: true,
       user: post.user,
     };
