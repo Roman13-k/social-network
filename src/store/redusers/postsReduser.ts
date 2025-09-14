@@ -39,6 +39,8 @@ const postInformation = `
   created_at,
   likes(count),
   comments(count),
+  post_views(count),
+  viewed_by_user:post_views(user_id),
   user:profiles (
     id,
     username,
@@ -64,6 +66,7 @@ export const createNewPost = createAsyncThunk<
   return data.map((post) => ({
     ...post,
     liked_by_user: false,
+    viewed_by_user: false,
     user: Array.isArray(post.user) ? post.user[0] : post.user,
   }));
 });
@@ -99,6 +102,7 @@ export const loadPosts = createAsyncThunk<
 
   return data.map((post) => ({
     ...post,
+    viewed_by_user: userId ? post.viewed_by_user.some((view) => view.user_id === userId) : false,
     liked_by_user: userId ? post.liked_by_user.some((like) => like.user_id === userId) : false,
     user: Array.isArray(post.user) ? post.user[0] : post.user,
   }));
@@ -118,6 +122,7 @@ export const getPostById = createAsyncThunk<
 
   return {
     ...data,
+    viewed_by_user: userId ? data.viewed_by_user.some((view) => view.user_id === userId) : false,
     liked_by_user: userId ? data.liked_by_user.some((like) => like.user_id === userId) : false,
     user: Array.isArray(data.user) ? data.user[0] : data.user,
   };
@@ -139,6 +144,7 @@ export const loadUserPosts = createAsyncThunk<
 
   return data.map((post) => ({
     ...post,
+    viewed_by_user: userId ? post.viewed_by_user.some((view) => view.user_id === userId) : false,
     liked_by_user: userId ? post.liked_by_user?.some((like) => like.user_id === userId) : false,
     user: Array.isArray(post.user) ? post.user[0] : post.user,
   }));
@@ -168,10 +174,24 @@ export const loadUserLikedPosts = createAsyncThunk<
     const post = item.post as unknown as PostInterface;
     return {
       ...post,
+      viewed_by_user: userId ? post.viewed_by_user : false,
       liked_by_user: true,
       user: post.user,
     };
   });
+});
+
+export const addPostView = createAsyncThunk<
+  { postId: string; userId: string },
+  { postId: string; userId: string },
+  { rejectValue: ErrorState }
+>("posts/addPostView", async ({ postId, userId }, { rejectWithValue }) => {
+  const { error } = await supabase.from("post_views").insert({ post_id: postId, user_id: userId });
+  if (error) {
+    return rejectWithValue(error);
+  }
+
+  return { postId, userId };
 });
 
 export const postsSlice = createSlice({
@@ -227,6 +247,14 @@ export const postsSlice = createSlice({
       } else if (state.userLikedOffset !== null) {
         state.userLikedPosts.push(...action.payload);
         state.userLikedOffset += limit;
+      }
+    });
+    addAsyncCase(builder, addPostView, (state, action) => {
+      const { postId } = action.payload;
+      const post = state.posts.find((p) => p.id === postId);
+      if (post && !post.viewed_by_user) {
+        post.viewed_by_user = true;
+        post.post_views[0].count += 1;
       }
     });
   },

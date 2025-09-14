@@ -6,7 +6,9 @@ export interface PostInterface {
   created_at: Date;
   likes: { count: number }[];
   comments: { count: number }[];
-  user: UserMainInfo;
+  post_views: { count: number }[];
   liked_by_user: boolean;
+  viewed_by_user: boolean;
+  user: UserMainInfo;
   image_url?: string[];
 }
