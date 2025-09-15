@@ -5,9 +5,19 @@ import React from "react";
 import P from "../../shared/text/P";
 import Link from "next/link";
 import DeleteDialog from "../../shared/dialog/DeleteDialog";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { deleteChat } from "@/store/redusers/chatsReduser";
+import { useRouter } from "next/navigation";
 
 export default function ChatHeader({ activeChat }: { activeChat: ChatInterface | null }) {
-  const handleDelete = () => {};
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { error, loading } = useAppSelector((state) => state.chats);
+  const handleDelete = async () => {
+    if (!activeChat) return;
+    await dispatch(deleteChat(activeChat.id));
+    if (!error && !loading) router.replace("/chats");
+  };
 
   return (
     <div className='py-4 px-5 bg-white w-full rounded-tr-lg'>
@@ -34,7 +44,7 @@ export default function ChatHeader({ activeChat }: { activeChat: ChatInterface |
         <DeleteDialog
           handleAction={handleDelete}
           triger={
-            <button className='ml-auto mr-10 cursor-pointer'>
+            <button disabled={loading} className='ml-auto mr-10 cursor-pointer disabled:opacity-70'>
               <Trash2 color='#ff0000' />
             </button>
           }

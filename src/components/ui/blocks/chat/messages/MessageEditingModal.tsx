@@ -1,6 +1,8 @@
 "use client";
 import ModalWithAutoClose from "@/components/ui/shared/containers/ModalWithAutoClose";
 import { MessageInterface } from "@/interfaces/message";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { deleteMessage, startEdit } from "@/store/redusers/messagesReduser";
 import { Copy, Pencil, Trash2 } from "lucide-react";
 import React from "react";
 
@@ -15,14 +17,23 @@ export default function MessageEditingModal({
   style = {},
   message,
 }: MessageEditingModalProps) {
+  const userId = useAppSelector((state) => state.user.user?.id);
+  const dispatch = useAppDispatch();
+
   const handleCopy = async () => {
     await navigator.clipboard.writeText(message.content);
     onClose();
   };
 
-  const handleEdit = () => {};
+  const handleEdit = () => {
+    dispatch(startEdit(message));
+    onClose();
+  };
 
-  const handleDelete = () => {};
+  const handleDelete = async () => {
+    await dispatch(deleteMessage(message.id));
+    onClose();
+  };
 
   return (
     <ModalWithAutoClose
@@ -35,12 +46,14 @@ export default function MessageEditingModal({
         <Copy />
         <span className='text-white text-sm'>Copy</span>
       </button>
-      <button
-        onClick={handleEdit}
-        className='bg-gray-600 hover:bg-gray-400 px-6  transition-colors duration-300 cursor-pointer py-2 flex items-center gap-2'>
-        <Pencil />
-        <span className='text-white text-sm'>Edit</span>
-      </button>
+      {userId === message.sender_id && (
+        <button
+          onClick={handleEdit}
+          className='bg-gray-600 hover:bg-gray-400 px-6  transition-colors duration-300 cursor-pointer py-2 flex items-center gap-2'>
+          <Pencil />
+          <span className='text-white text-sm'>Edit</span>
+        </button>
+      )}
       <button
         onClick={handleDelete}
         className='bg-gray-600 hover:bg-gray-400 px-6  transition-colors duration-300 cursor-pointer py-2 flex items-center gap-2'>

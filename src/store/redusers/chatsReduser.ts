@@ -75,6 +75,16 @@ export const getUsersChats = createAsyncThunk<
   }));
 });
 
+export const deleteChat = createAsyncThunk<string, string, { rejectValue: ErrorState }>(
+  "/chats/deleteChat",
+  async (chatId, { rejectWithValue }) => {
+    const { error } = await supabase.from("chats").delete().eq("id", chatId);
+    if (error) return rejectWithValue(error);
+
+    return chatId;
+  },
+);
+
 export const chatsSlice = createSlice({
   name: "chats",
   initialState,
@@ -99,6 +109,11 @@ export const chatsSlice = createSlice({
       if (action.payload.length < limit && state.chats.length !== 0) {
         state.offset = null;
       }
+    });
+    addAsyncCase(builder, deleteChat, (state, action) => {
+      state.chats = state.chats.filter((chat) => chat.id !== action.payload);
+      state.activeChat = null;
+      if (state.offset !== null) state.offset -= 1;
     });
   },
 });

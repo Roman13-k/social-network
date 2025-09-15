@@ -3,7 +3,13 @@ import React, { useEffect, useState } from "react";
 import ChatContainer from "../../shared/containers/ChatContainer";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { enterChat } from "@/store/redusers/chatsReduser";
-import { incrOffset, messageReceived } from "@/store/redusers/messagesReduser";
+import {
+  canselEdit,
+  incrOffset,
+  messageReceived,
+  newMessage,
+  updateMessage,
+} from "@/store/redusers/messagesReduser";
 import { supabase } from "@/lib/supabaseClient";
 import Messages from "./messages/Messages";
 import { usePathname } from "next/navigation";
@@ -18,19 +24,20 @@ export default function Chat() {
   const [isToBootom, setIsToBottom] = useState(true);
   const { activeChat, chats } = useAppSelector((state) => state.chats);
   const userId = useAppSelector((state) => state.user.user?.id);
+  const { editingMessage, error } = useAppSelector((state) => state.messages);
   const dispatch = useAppDispatch();
 
   const handleNewMessage = async () => {
-    if (!message.trim() || !userId) return;
+    if (!message.trim() || !userId || !activeChat) return;
 
-    const { error } = await supabase.from("messages").insert([
-      {
-        chat_id: activeChat?.id,
-        sender_id: userId,
-        content: message,
-      },
-    ]);
+    if (editingMessage) {
+      await dispatch(updateMessage({ id: editingMessage.id, content: message }));
+      dispatch(canselEdit());
+      setMessage("");
+      return;
+    }
 
+    await dispatch(newMessage({ chat_id: activeChat?.id, sender_id: userId, content: message }));
     if (!error) {
       dispatch(incrOffset());
       setMessage("");

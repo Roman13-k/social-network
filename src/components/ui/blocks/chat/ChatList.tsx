@@ -1,7 +1,7 @@
 "use client";
 import { useAppSelector } from "@/store/hooks";
 import { getUsersChats } from "@/store/redusers/chatsReduser";
-import React from "react";
+import React, { useMemo } from "react";
 import P from "../../shared/text/P";
 import ChatSkeleton from "../../shared/skeletons/ChatSkeleton";
 import ChatElement from "./ChatElement";
@@ -17,6 +17,11 @@ export default function ChatList() {
     return getUsersChats({ userId, offset });
   };
 
+  const chatsList = useMemo(
+    () => chats.map((chat) => <ChatElement key={chat.id} chat={chat} />),
+    [chats],
+  );
+
   return (
     <aside
       className={`${
@@ -30,7 +35,7 @@ export default function ChatList() {
             You dont have any chats yet
           </P>
         ) : (
-          chats.map((chat) => <ChatElement key={chat.id} chat={chat} />)
+          chatsList
         )}
         {loading && (
           <>
