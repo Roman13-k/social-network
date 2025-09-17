@@ -1,5 +1,6 @@
+"use client";
 import { ChatInterface } from "@/interfaces/chat";
-import { CircleUserRound, Trash2 } from "lucide-react";
+import { ArrowLeft, CircleUserRound, Trash2 } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import P from "../../shared/text/P";
@@ -22,6 +23,9 @@ export default function ChatHeader({ activeChat }: { activeChat: ChatInterface |
   return (
     <div className='py-4 px-5 bg-white w-full rounded-tr-lg'>
       <div className='flex gap-2 items-center'>
+        <Link className='lg:hidden' href={"/chats"}>
+          <ArrowLeft color='#657786' />
+        </Link>
         <Link href={`/profile/${activeChat?.participants[0].id}`}>
           {activeChat?.participants?.[0]?.avatar_url ? (
             <Image

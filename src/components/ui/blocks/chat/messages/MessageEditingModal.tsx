@@ -2,9 +2,8 @@
 import ModalWithAutoClose from "@/components/ui/shared/containers/ModalWithAutoClose";
 import { MessageInterface } from "@/interfaces/message";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { deleteMessage, startEdit } from "@/store/redusers/messagesReduser";
-import { Copy, Pencil, Trash2 } from "lucide-react";
 import React from "react";
+import { getMessageActions } from "./getMessagesActions";
 
 interface MessageEditingModalProps {
   onClose: () => void;
@@ -20,46 +19,22 @@ export default function MessageEditingModal({
   const userId = useAppSelector((state) => state.user.user?.id);
   const dispatch = useAppDispatch();
 
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(message.content);
-    onClose();
-  };
-
-  const handleEdit = () => {
-    dispatch(startEdit(message));
-    onClose();
-  };
-
-  const handleDelete = async () => {
-    await dispatch(deleteMessage(message.id));
-    onClose();
-  };
+  const actions = getMessageActions(message, userId, dispatch, onClose);
 
   return (
     <ModalWithAutoClose
       style={style}
       onCLose={onClose}
-      className='absolute py-1 rounded-md bg-gray-600 flex flex-col z-60'>
-      <button
-        onClick={handleCopy}
-        className='bg-gray-600 hover:bg-gray-400 px-6  transition-colors duration-300 cursor-pointer py-2 flex items-center gap-2'>
-        <Copy />
-        <span className='text-white text-sm'>Copy</span>
-      </button>
-      {userId === message.sender_id && (
+      className='absolute py-1 rounded-md bg-gray-500 flex flex-col z-60'>
+      {actions.map(({ label, icon, onClick, textColor }) => (
         <button
-          onClick={handleEdit}
-          className='bg-gray-600 hover:bg-gray-400 px-6  transition-colors duration-300 cursor-pointer py-2 flex items-center gap-2'>
-          <Pencil />
-          <span className='text-white text-sm'>Edit</span>
+          key={label}
+          onClick={onClick}
+          className='bg-gray-500 hover:bg-gray-400 px-5 transition-colors duration-300 cursor-pointer py-1.5 flex items-center gap-2'>
+          {icon}
+          <span className={`${textColor} text-sm`}>{label}</span>
         </button>
-      )}
-      <button
-        onClick={handleDelete}
-        className='bg-gray-600 hover:bg-gray-400 px-6  transition-colors duration-300 cursor-pointer py-2 flex items-center gap-2'>
-        <Trash2 color='#ff0000' />
-        <span className='text-red-500 text-sm'>Delete</span>
-      </button>
+      ))}
     </ModalWithAutoClose>
   );
 }

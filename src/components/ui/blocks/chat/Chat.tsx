@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import ChatContainer from "../../shared/containers/ChatContainer";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { enterChat } from "@/store/redusers/chatsReduser";
+import { enterChat, leaveChat } from "@/store/redusers/chatsReduser";
 import {
   canselEdit,
   incrOffset,
@@ -31,9 +31,10 @@ export default function Chat() {
     if (!message.trim() || !userId || !activeChat) return;
 
     if (editingMessage) {
-      await dispatch(updateMessage({ id: editingMessage.id, content: message }));
+      if (editingMessage.content !== message) {
+        await dispatch(updateMessage({ id: editingMessage.id, content: message }));
+      }
       dispatch(canselEdit());
-      setMessage("");
       return;
     }
 
@@ -71,6 +72,7 @@ export default function Chat() {
 
     return () => {
       supabase.removeChannel(channel);
+      dispatch(leaveChat());
     };
   }, [activeChat, dispatch]);
 

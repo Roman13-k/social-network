@@ -8,6 +8,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface MessageState {
   messages: MessageInterface[];
   editingMessage: MessageInterface | null;
+  replyMessage: MessageInterface | null;
   loading: boolean;
   error: ErrorState | null;
   offset: number | null;
@@ -16,6 +17,7 @@ interface MessageState {
 const initialState: MessageState = {
   messages: [],
   editingMessage: null,
+  replyMessage: null,
   loading: false,
   error: null,
   offset: 0,
@@ -96,6 +98,12 @@ export const messagesSlice = createSlice({
     canselEdit: (state) => {
       state.editingMessage = null;
     },
+    startReply: (state, action: PayloadAction<MessageInterface>) => {
+      state.replyMessage = action.payload;
+    },
+    canselReply: (state) => {
+      state.replyMessage = null;
+    },
   },
   extraReducers: (builder) => {
     addAsyncCase(builder, loadMessages, (state, action) => {
@@ -122,7 +130,14 @@ export const messagesSlice = createSlice({
   },
 });
 
-export const { messageReceived, clearMessages, incrOffset, startEdit, canselEdit } =
-  messagesSlice.actions;
+export const {
+  messageReceived,
+  clearMessages,
+  incrOffset,
+  startEdit,
+  canselEdit,
+  startReply,
+  canselReply,
+} = messagesSlice.actions;
 
 export default messagesSlice.reducer;

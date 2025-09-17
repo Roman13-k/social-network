@@ -2,7 +2,8 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Send } from "lucide-react";
 import { validateNumberOfChars } from "@/utils/validate/validateNumberOfChars";
 import { useAppSelector } from "@/store/hooks";
-import InputEditWindow from "./InputEditWindow";
+import InputHeader from "./InputHeader";
+import { InputModeType } from "@/types/chat";
 
 interface ChatInputProps {
   handleNewMessage: (isEdit: boolean) => void;
@@ -12,7 +13,8 @@ interface ChatInputProps {
 
 export default function ChatInput({ handleNewMessage, message, setMessage }: ChatInputProps) {
   const [error, setError] = useState(false);
-  const { editingMessage } = useAppSelector((state) => state.messages);
+  const { editingMessage, replyMessage } = useAppSelector((state) => state.messages);
+  const [activeMode, setActiveMode] = useState<InputModeType>(null);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError(!validateNumberOfChars(e.target.value));
@@ -20,13 +22,24 @@ export default function ChatInput({ handleNewMessage, message, setMessage }: Cha
   };
 
   useEffect(() => {
-    if (editingMessage) setMessage(editingMessage.content);
-  }, [editingMessage]);
+    if (editingMessage && !replyMessage) {
+      setActiveMode("edit");
+      setMessage(editingMessage.content);
+    } else if (replyMessage && !editingMessage) {
+      setActiveMode("reply");
+      setMessage(replyMessage.content);
+    } else if (!editingMessage && !replyMessage) {
+      setMessage("");
+      setActiveMode(null);
+    }
+  }, [editingMessage, replyMessage]);
+
+  const currentMessage = activeMode === "edit" ? editingMessage : replyMessage;
 
   return (
     <div className='flex flex-col w-full'>
-      {editingMessage && (
-        <InputEditWindow setMessage={setMessage} editingMessage={editingMessage} />
+      {currentMessage && (
+        <InputHeader message={currentMessage} type={activeMode === "edit" ? "edit" : "reply"} />
       )}
       <div className='relative w-full'>
         <input
