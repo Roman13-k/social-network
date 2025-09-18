@@ -12,11 +12,11 @@ export default function RenderContentWithLinks({
   className?: string;
   varinant?: ButtonVariant;
 }) {
-  const words = content.split(/\s+/);
+  const words = content?.split(/\s+/);
 
   return (
     <P className={className ?? ""} variant={varinant}>
-      {words.map((word, index) => {
+      {words?.map((word, index) => {
         const isPhone = phoneSchema(word);
         const isLink = linkSchema(word);
         const isEmail = emailSchema(word);

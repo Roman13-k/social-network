@@ -5,9 +5,11 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { enterChat, leaveChat } from "@/store/redusers/chatsReduser";
 import {
   canselEdit,
+  canselReply,
   incrOffset,
   messageReceived,
   newMessage,
+  newReplyMessage,
   updateMessage,
 } from "@/store/redusers/messagesReduser";
 import { supabase } from "@/lib/supabaseClient";
@@ -16,6 +18,7 @@ import { usePathname } from "next/navigation";
 import ChatInput from "./ChatInput";
 import EmojiButtonComponent from "../../shared/buttons/EmojiButtonComponent";
 import ChatHeader from "./ChatHeader";
+import { InputModeType } from "@/types/chat";
 
 export default function Chat() {
   const path = usePathname();
@@ -24,24 +27,41 @@ export default function Chat() {
   const [isToBootom, setIsToBottom] = useState(true);
   const { activeChat, chats } = useAppSelector((state) => state.chats);
   const userId = useAppSelector((state) => state.user.user?.id);
-  const { editingMessage, error } = useAppSelector((state) => state.messages);
+  const { editingMessage, error, replyMessage } = useAppSelector((state) => state.messages);
   const dispatch = useAppDispatch();
 
-  const handleNewMessage = async () => {
+  const handleNewMessage = async (type: InputModeType) => {
     if (!message.trim() || !userId || !activeChat) return;
-
-    if (editingMessage) {
-      if (editingMessage.content !== message) {
-        await dispatch(updateMessage({ id: editingMessage.id, content: message }));
+    switch (type) {
+      case "edit": {
+        if (editingMessage && editingMessage.content !== message) {
+          await dispatch(updateMessage({ id: editingMessage.id, content: message }));
+        }
+        dispatch(canselEdit());
+        break;
       }
-      dispatch(canselEdit());
-      return;
-    }
-
-    await dispatch(newMessage({ chat_id: activeChat?.id, sender_id: userId, content: message }));
-    if (!error) {
-      dispatch(incrOffset());
-      setMessage("");
+      case "reply": {
+        if (replyMessage)
+          await dispatch(
+            newReplyMessage({
+              chat_id: activeChat?.id,
+              sender_id: userId,
+              content: message,
+              id: replyMessage.id,
+            }),
+          );
+        dispatch(canselReply());
+        dispatch(incrOffset());
+        break;
+      }
+      default: {
+        await dispatch(
+          newMessage({ chat_id: activeChat?.id, sender_id: userId, content: message }),
+        );
+        dispatch(incrOffset());
+        setMessage("");
+        break;
+      }
     }
   };
 
@@ -78,7 +98,7 @@ export default function Chat() {
 
   return (
     <ChatContainer
-      wrapper={`${activeChat ? "flex" : "hidden"} lg:flex justify-center w-full min-w-0`}
+      wrapper={`${activeChat ? "flex" : "hidden"} lg:flex justify-center w-full min-w-0 `}
       className='min-w-0 w-full'>
       <ChatHeader activeChat={activeChat} />
       <Messages
@@ -87,7 +107,7 @@ export default function Chat() {
         isToBootom={isToBootom}
         setIsToBottom={setIsToBottom}
       />
-      <div className='flex w-full items-center gap-2 max-w-[768px] mx-auto'>
+      <div className='flex w-full items-center gap-2 max-w-[768px] mx-auto '>
         <ChatInput handleNewMessage={handleNewMessage} message={message} setMessage={setMessage} />
         <EmojiButtonComponent
           className='-top-84 -left-70 md:-left-70 lg:-left-50'

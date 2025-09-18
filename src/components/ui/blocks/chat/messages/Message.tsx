@@ -2,18 +2,26 @@
 import RenderContentWithLinks from "@/components/ui/layout/RenderContentWithLinks";
 import { MessageInterface } from "@/interfaces/message";
 import { chatDateFormat, chatTitleDateFormat } from "@/utils/dates/chatDateFormat";
-import React, { useRef, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import MessageEditingModal from "./MessageEditingModal";
 import { getRelativePosition } from "@/utils/getRelativePosition";
 import { PositionInterface } from "@/interfaces";
 import DivWithLongTouch from "@/components/ui/layout/DivWithLongTouch";
+import MessagePreview from "./MessagePreview";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { getUserName } from "@/utils/userGetInfo";
+import { getMessageById, startReply } from "@/store/redusers/messagesReduser";
 
 interface MessageProps {
   message: MessageInterface;
-  userId: string | undefined;
+  messagesRef: RefObject<HTMLDivElement | null>;
 }
 
-export default function Message({ message, userId }: MessageProps) {
+export default function Message({ message, messagesRef }: MessageProps) {
+  const user = useAppSelector((state) => state.user.user);
+  const activeChat = useAppSelector((state) => state.chats.activeChat);
+  const dispatch = useAppDispatch();
+  const [replyMessage, setReplyMessage] = useState({} as MessageInterface);
   const [isEditingModal, setIsEditingModal] = useState(false);
   const [position, setPosition] = useState<PositionInterface>({ x: 0, y: 0 });
   const messageRef = useRef<HTMLDivElement | null>(null);
@@ -28,15 +36,36 @@ export default function Message({ message, userId }: MessageProps) {
     setIsEditingModal(true);
   };
 
+  useEffect(() => {
+    async function fetchReply() {
+      if (message.reply_to) {
+        const data = await dispatch(getMessageById(message.reply_to)).unwrap();
+        setReplyMessage(data);
+      }
+    }
+    fetchReply();
+  }, []);
+
   return (
     <DivWithLongTouch
       ref={messageRef}
       onContextMenu={(e) => handleOpenEditModal(e)}
-      delay={500}
+      onSwipe={() => dispatch(startReply(message))}
       onLongTouch={(e) => handleOpenEditModal(e)}
       className={`${
-        message.sender_id === userId ? "bg-white ml-auto" : "bg-button/85"
-      } py-1.5 md:py-2 md:px-4 px-2.5 rounded-[20px] border border-border flex flex-col max-w-full relative`}>
+        message.sender_id === user?.id ? "bg-white ml-auto" : "bg-button/85"
+      } py-1.5 md:py-2 md:px-2 px-1.5 rounded-[20px] border border-border flex flex-col max-w-full relative`}>
+      {replyMessage.id && (
+        <MessagePreview
+          color={message.sender_id === user?.id ? "#1da1f2" : "#9b51e0"}
+          title={
+            replyMessage.sender_id === user?.id
+              ? getUserName(user)
+              : activeChat?.participants[0].username ?? "anonim"
+          }
+          content={replyMessage.content}
+        />
+      )}
       <RenderContentWithLinks
         varinant='default'
         className='break-words whitespace-normal'
@@ -50,12 +79,15 @@ export default function Message({ message, userId }: MessageProps) {
         {chatDateFormat(message.created_at)}
       </span>
 
-      {isEditingModal && messageRef.current && (
+      {isEditingModal && messagesRef.current && (
         <MessageEditingModal
           message={message}
           style={{
             top: position.y - 120,
-            left: Math.min(Math.max(position.x - 120, 60), messageRef.current.offsetWidth - 120),
+            left:
+              message.sender_id === user?.id
+                ? Math.max(position.x - 130, -100)
+                : Math.min(position.x + 60, messagesRef.current.offsetWidth - 200),
           }}
           onClose={() => setIsEditingModal(false)}
         />

@@ -42,6 +42,17 @@ export const loadMessages = createAsyncThunk<
   return data.reverse();
 });
 
+export const getMessageById = createAsyncThunk<
+  MessageInterface,
+  string,
+  { rejectValue: ErrorState }
+>("/", async (id, { rejectWithValue }) => {
+  const { data, error } = await supabase.from("messages").select("*").eq("id", id).single();
+  if (error) return rejectWithValue(error);
+
+  return data;
+});
+
 export const deleteMessage = createAsyncThunk<string, string, { rejectValue: ErrorState }>(
   "/messages/deleteMessage",
   async (id, { rejectWithValue }) => {
@@ -61,6 +72,24 @@ export const updateMessage = createAsyncThunk<
   if (error) return rejectWithValue(error);
 
   return { id, content };
+});
+
+export const newReplyMessage = createAsyncThunk<
+  { id: string },
+  { id: string; content: string; chat_id: string; sender_id: string },
+  { rejectValue: ErrorState }
+>("/messages/updateMessage", async ({ id, content, chat_id, sender_id }, { rejectWithValue }) => {
+  const { error } = await supabase.from("messages").insert([
+    {
+      chat_id,
+      sender_id,
+      content,
+      reply_to: id,
+    },
+  ]);
+  if (error) return rejectWithValue(error);
+
+  return { id };
 });
 
 export const newMessage = createAsyncThunk<

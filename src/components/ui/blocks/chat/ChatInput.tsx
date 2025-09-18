@@ -6,7 +6,7 @@ import InputHeader from "./InputHeader";
 import { InputModeType } from "@/types/chat";
 
 interface ChatInputProps {
-  handleNewMessage: (isEdit: boolean) => void;
+  handleNewMessage: (type: InputModeType) => void;
   message: string;
   setMessage: Dispatch<SetStateAction<string>>;
 }
@@ -27,7 +27,6 @@ export default function ChatInput({ handleNewMessage, message, setMessage }: Cha
       setMessage(editingMessage.content);
     } else if (replyMessage && !editingMessage) {
       setActiveMode("reply");
-      setMessage(replyMessage.content);
     } else if (!editingMessage && !replyMessage) {
       setMessage("");
       setActiveMode(null);
@@ -37,7 +36,7 @@ export default function ChatInput({ handleNewMessage, message, setMessage }: Cha
   const currentMessage = activeMode === "edit" ? editingMessage : replyMessage;
 
   return (
-    <div className='flex flex-col w-full'>
+    <div className='flex flex-col w-full pt-1.5'>
       {currentMessage && (
         <InputHeader message={currentMessage} type={activeMode === "edit" ? "edit" : "reply"} />
       )}
@@ -48,7 +47,7 @@ export default function ChatInput({ handleNewMessage, message, setMessage }: Cha
           onKeyDown={(e) => {
             if (e.key === "Enter" && !error) {
               e.preventDefault();
-              handleNewMessage(!!editingMessage);
+              handleNewMessage(activeMode);
             }
           }}
           className='w-full md:py-3 py-1.5 px-2 pr-12 border-3 border-accent rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500'
@@ -56,7 +55,7 @@ export default function ChatInput({ handleNewMessage, message, setMessage }: Cha
         />
         <button
           disabled={error}
-          onClick={() => handleNewMessage(!!editingMessage)}
+          onClick={() => handleNewMessage(activeMode)}
           type='button'
           className='absolute right-3 top-1/2 -translate-y-1/2 text-accent hover:text-accent/90 cursor-pointer disabled:pointer-events-none'>
           <Send className={error ? "opacity-70" : ""} size={35} />

@@ -5,4 +5,5 @@ export interface MessageInterface {
   content: string;
   created_at: string;
   updated: boolean;
+  reply_to: string | null;
 }

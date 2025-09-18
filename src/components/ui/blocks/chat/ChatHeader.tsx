@@ -1,6 +1,6 @@
 "use client";
 import { ChatInterface } from "@/interfaces/chat";
-import { ArrowLeft, CircleUserRound, Trash2 } from "lucide-react";
+import { ArrowLeft, CircleUserRound, Pin, Trash2 } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import P from "../../shared/text/P";
@@ -45,10 +45,16 @@ export default function ChatHeader({ activeChat }: { activeChat: ChatInterface |
           <span className='text-text-secondary text-sm'>was online in NaN</span>
         </div>
 
+        <button className='ml-auto cursor-pointer'>
+          <Pin />
+        </button>
+
         <DeleteDialog
           handleAction={handleDelete}
           triger={
-            <button disabled={loading} className='ml-auto mr-10 cursor-pointer disabled:opacity-70'>
+            <button
+              disabled={loading}
+              className='lg:ml-5 md:ml-3 ml-1 mr-8 cursor-pointer disabled:opacity-70'>
               <Trash2 color='#ff0000' />
             </button>
           }

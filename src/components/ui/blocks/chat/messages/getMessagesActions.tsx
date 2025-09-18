@@ -36,7 +36,9 @@ export const getMessageActions = (
     onClose();
   };
 
-  const handlePin = () => {};
+  const handlePin = () => {
+    onClose();
+  };
 
   return [
     {

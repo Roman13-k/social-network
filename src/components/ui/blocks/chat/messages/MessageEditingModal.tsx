@@ -25,7 +25,7 @@ export default function MessageEditingModal({
     <ModalWithAutoClose
       style={style}
       onCLose={onClose}
-      className='absolute py-1 rounded-md bg-gray-500 flex flex-col z-60'>
+      className='absolute py-1 rounded-md bg-gray-500 flex flex-col z-100'>
       {actions.map(({ label, icon, onClick, textColor }) => (
         <button
           key={label}

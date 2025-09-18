@@ -1,31 +1,36 @@
-import React, { useRef, forwardRef } from "react";
+import React, { useRef, forwardRef, useState } from "react";
 
 interface DivWithLongTouchProps extends React.HTMLAttributes<HTMLDivElement> {
   onLongTouch?: (e: React.TouchEvent<HTMLDivElement>) => void;
+  onSwipe?: () => void;
   delay?: number;
 }
 
 const DivWithLongTouch = forwardRef<HTMLDivElement, DivWithLongTouchProps>(
-  ({ onLongTouch, delay = 500, ...props }, ref) => {
-    const holdTimeout = useRef<NodeJS.Timeout | null>(null);
+  ({ onLongTouch, delay = 400, onSwipe, ...props }, ref) => {
+    const [startX, setStartX] = useState(0);
+    const [translateX, setTranslateX] = useState(0);
+    const threshold = 50;
 
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-      holdTimeout.current = setTimeout(() => {
-        if (onLongTouch) onLongTouch(e);
-      }, delay);
+      setStartX(e.touches[0].clientX);
     };
 
-    const handleTouchEnd = () => {
-      if (holdTimeout.current) {
-        clearTimeout(holdTimeout.current);
-        holdTimeout.current = null;
+    const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+      if (translateX > threshold && onSwipe) {
+        onSwipe();
+        setTranslateX(0);
+      } else {
+        setTimeout(() => {
+          if (onLongTouch) onLongTouch(e);
+        }, delay);
       }
     };
 
-    const handleTouchMove = () => {
-      if (holdTimeout.current) {
-        clearTimeout(holdTimeout.current);
-        holdTimeout.current = null;
+    const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+      const deltaX = e.touches[0].clientX - startX;
+      if (deltaX > 0) {
+        setTranslateX(deltaX);
       }
     };
 
@@ -36,6 +41,7 @@ const DivWithLongTouch = forwardRef<HTMLDivElement, DivWithLongTouchProps>(
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onTouchMove={handleTouchMove}
+        style={{ transform: `translateX(${translateX}px)` }}
       />
     );
   },

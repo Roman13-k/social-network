@@ -1,22 +1,27 @@
-// components/ui/MessagePreview.tsx
 import React from "react";
-import clsx from "clsx";
 import P from "@/components/ui/shared/text/P";
 
 interface MessagePreviewProps {
   title: string;
   content: string;
   className?: string;
+  color?: string; // hex или css var
 }
 
-export default function MessagePreview({ title, content, className }: MessagePreviewProps) {
+export default function MessagePreview({
+  title,
+  content,
+  className = "",
+  color = "#1da1f2",
+}: MessagePreviewProps) {
   return (
     <div
-      className={clsx(
-        "border-l-3 px-2 py-1 border-accent rounded-md bg-accent/30 flex-1 min-w-0",
-        className,
-      )}>
-      <P size='xs' className='text-accent font-medium'>
+      style={{
+        backgroundColor: `${color}4D`,
+        borderLeft: `3px solid ${color}`,
+      }}
+      className={`${className} px-2 py-1 rounded-md flex-1 min-w-0`}>
+      <P size='xs' style={{ color, fontWeight: 500 }}>
         {title}
       </P>
       <P className='truncate' size='xs'>

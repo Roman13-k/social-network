@@ -10,8 +10,8 @@ export default function ChatContainer({
     <div
       className={`${
         wrapper ?? ""
-      } w-full bg-[url("/chatbg.jpg")] bg-no-repeat bg-center bg-cover rounded-tl-lg md:rounded-tl-none rounded-tr-lg `}>
-      <div className={`flex flex-col h-full gap-5 ${className ?? ""}`}>{children}</div>
+      }bg-[url("/chatbg.jpg")] bg-no-repeat bg-center bg-cover  w-full rounded-tl-lg md:rounded-tl-none rounded-tr-lg `}>
+      <div className={`flex flex-col h-full ${className ?? ""}`}>{children}</div>
     </div>
   );
 }
