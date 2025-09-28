@@ -1,6 +1,12 @@
-import { Copy, Pencil, Pin, Reply, Trash2 } from "lucide-react";
+import { Copy, Pencil, Pin, PinOff, Reply, Trash2 } from "lucide-react";
 import { MessageInterface } from "@/interfaces/message";
-import { deleteMessage, startEdit, startReply } from "@/store/redusers/messagesReduser";
+import {
+  deleteMessage,
+  pinMessage,
+  startEdit,
+  startReply,
+  unpinMessage,
+} from "@/store/redusers/messagesReduser";
 import { AppDispatch } from "@/store/store";
 
 interface Action {
@@ -13,6 +19,7 @@ interface Action {
 export const getMessageActions = (
   message: MessageInterface,
   userId: string | undefined,
+  chatId: string | undefined,
   dispatch: AppDispatch,
   onClose: () => void,
 ): Action[] => {
@@ -37,14 +44,20 @@ export const getMessageActions = (
   };
 
   const handlePin = () => {
+    dispatch(pinMessage({ chatId, message }));
+    onClose();
+  };
+
+  const handleUnpin = () => {
+    dispatch(unpinMessage({ chatId, messageId: message.id }));
     onClose();
   };
 
   return [
     {
-      label: "Pin",
-      icon: <Pin />,
-      onClick: handlePin,
+      label: message.ispinned ? "Unpin" : "Pin",
+      icon: message.ispinned ? <PinOff /> : <Pin />,
+      onClick: message.ispinned ? handleUnpin : handlePin,
       textColor: "text-white",
     },
     {

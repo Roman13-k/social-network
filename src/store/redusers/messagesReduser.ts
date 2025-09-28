@@ -1,5 +1,9 @@
 import { ErrorState } from "@/interfaces";
-import { MessageInterface } from "@/interfaces/message";
+import {
+  MessageInterface,
+  PinnedMessageInterface,
+  PinnedMessagesResponse,
+} from "@/interfaces/message";
 import { supabase } from "@/lib/supabaseClient";
 import { addAsyncCase } from "@/utils/addAsyncCase";
 import { mapAuthError } from "@/utils/mapAuthError";
@@ -9,18 +13,24 @@ interface MessageState {
   messages: MessageInterface[];
   editingMessage: MessageInterface | null;
   replyMessage: MessageInterface | null;
+  pinnedMessages: PinnedMessagesResponse;
+  isPinnedModal: boolean;
   loading: boolean;
   error: ErrorState | null;
   offset: number | null;
+  pinOffset: number | null;
 }
 
 const initialState: MessageState = {
   messages: [],
   editingMessage: null,
   replyMessage: null,
+  pinnedMessages: { messages: [], total_count: 0 },
+  isPinnedModal: false,
   loading: false,
   error: null,
   offset: 0,
+  pinOffset: 0,
 };
 
 const limit = 10;
@@ -78,7 +88,7 @@ export const newReplyMessage = createAsyncThunk<
   { id: string },
   { id: string; content: string; chat_id: string; sender_id: string },
   { rejectValue: ErrorState }
->("/messages/updateMessage", async ({ id, content, chat_id, sender_id }, { rejectWithValue }) => {
+>("/messages/newReplyMessage", async ({ id, content, chat_id, sender_id }, { rejectWithValue }) => {
   const { error } = await supabase.from("messages").insert([
     {
       chat_id,
@@ -107,6 +117,57 @@ export const newMessage = createAsyncThunk<
   if (error) return rejectWithValue(error);
 });
 
+export const loadPinMessages = createAsyncThunk<
+  PinnedMessagesResponse,
+  { chatId: string; offset: number },
+  { rejectValue: ErrorState }
+>("messages/loadPinMessages", async ({ chatId, offset }, { rejectWithValue }) => {
+  const { data, error, count } = await supabase
+    .from("chat_pinned_messages")
+    .select("message_id, messages(*)", { count: "exact" })
+    .eq("chat_id", chatId)
+    .range(offset, offset + limit - 1)
+    .order("pinned_at", { ascending: false });
+
+  if (error) return rejectWithValue(error);
+
+  const res = (data as unknown as { message_id: string; messages: MessageInterface }[]).map(
+    (r) => r.messages,
+  );
+
+  return {
+    messages: res,
+    total_count: count || 0,
+  };
+});
+
+export const pinMessage = createAsyncThunk<
+  MessageInterface,
+  { chatId: string | undefined; message: MessageInterface },
+  { rejectValue: ErrorState }
+>("messages/pinMessage", async ({ chatId, message }, { rejectWithValue }) => {
+  const { error } = await supabase.from("chat_pinned_messages").insert({
+    chat_id: chatId,
+    message_id: message.id,
+  });
+  if (error) return rejectWithValue(error);
+  return message;
+});
+
+export const unpinMessage = createAsyncThunk<
+  string,
+  { chatId: string | undefined; messageId: string },
+  { rejectValue: ErrorState }
+>("messages/unpinMessage", async ({ chatId, messageId }, { rejectWithValue }) => {
+  const { error } = await supabase
+    .from("chat_pinned_messages")
+    .delete()
+    .eq("chat_id", chatId)
+    .eq("message_id", messageId);
+  if (error) return rejectWithValue(error);
+  return messageId;
+});
+
 export const messagesSlice = createSlice({
   name: "messages",
   initialState,
@@ -133,6 +194,12 @@ export const messagesSlice = createSlice({
     canselReply: (state) => {
       state.replyMessage = null;
     },
+    openPinned: (state) => {
+      state.isPinnedModal = true;
+    },
+    closePinned: (state) => {
+      state.isPinnedModal = false;
+    },
   },
   extraReducers: (builder) => {
     addAsyncCase(builder, loadMessages, (state, action) => {
@@ -142,6 +209,32 @@ export const messagesSlice = createSlice({
         state.messages.unshift(...action.payload);
         state.offset += limit;
       }
+    });
+    addAsyncCase(builder, loadPinMessages, (state, action) => {
+      if (action.payload?.messages?.length === 0) {
+        state.pinOffset = null;
+      } else if (state.pinOffset !== null) {
+        state.pinnedMessages.messages.unshift(...action.payload.messages);
+        state.pinnedMessages.total_count = action.payload.total_count;
+        state.pinOffset += limit;
+      }
+    });
+    addAsyncCase(builder, pinMessage, (state, action) => {
+      if (!state.pinnedMessages.messages.some((msg) => msg.id === action.payload.id)) {
+        state.pinnedMessages.messages.push(action.payload);
+      }
+      state.messages = state.messages.map((msg) =>
+        msg.id === action.payload.id ? { ...msg, ispinned: true } : msg,
+      );
+    });
+    addAsyncCase(builder, unpinMessage, (state, action) => {
+      state.pinnedMessages.messages = state.pinnedMessages.messages.filter(
+        (ms) => ms.id !== action.payload,
+      );
+      if (state.pinOffset !== null) state.pinOffset -= 1;
+      state.messages = state.messages.map((msg) =>
+        msg.id === action.payload ? { ...msg, ispinned: false } : msg,
+      );
     });
     addAsyncCase(builder, deleteMessage, (state, action) => {
       state.messages = state.messages.filter((message) => message.id !== action.payload);
@@ -167,6 +260,8 @@ export const {
   canselEdit,
   startReply,
   canselReply,
+  openPinned,
+  closePinned,
 } = messagesSlice.actions;
 
 export default messagesSlice.reducer;

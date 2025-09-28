@@ -11,6 +11,7 @@ import MessagePreview from "./MessagePreview";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getUserName } from "@/utils/userGetInfo";
 import { getMessageById, startReply } from "@/store/redusers/messagesReduser";
+import { Pin } from "lucide-react";
 
 interface MessageProps {
   message: MessageInterface;
@@ -54,7 +55,7 @@ export default function Message({ message, messagesRef }: MessageProps) {
       onLongTouch={(e) => handleOpenEditModal(e)}
       className={`${
         message.sender_id === user?.id ? "bg-white ml-auto" : "bg-button/85"
-      } py-1.5 md:py-2 md:px-2 px-1.5 rounded-[20px] border border-border flex flex-col max-w-full relative`}>
+      } py-1.5 md:py-2 md:px-4 px-1.5 rounded-[20px] border border-border flex flex-col max-w-full relative`}>
       {replyMessage.id && (
         <MessagePreview
           color={message.sender_id === user?.id ? "#1da1f2" : "#9b51e0"}
@@ -73,10 +74,11 @@ export default function Message({ message, messagesRef }: MessageProps) {
       />
 
       <span
-        className='self-end text-[14px] text-text-secondary'
+        className='self-end text-[14px] text-text-secondary flex items-center'
         title={chatTitleDateFormat(message.created_at)}>
         {message.updated ? "edited " : ""}
         {chatDateFormat(message.created_at)}
+        {message.ispinned && <Pin size={16} className='rotate-20' />}
       </span>
 
       {isEditingModal && messagesRef.current && (

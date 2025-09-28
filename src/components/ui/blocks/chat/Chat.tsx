@@ -27,7 +27,8 @@ export default function Chat() {
   const [isToBootom, setIsToBottom] = useState(true);
   const { activeChat, chats } = useAppSelector((state) => state.chats);
   const userId = useAppSelector((state) => state.user.user?.id);
-  const { editingMessage, error, replyMessage } = useAppSelector((state) => state.messages);
+  const { editingMessage, error, replyMessage, isPinnedModal, pinnedMessages, messages } =
+    useAppSelector((state) => state.messages);
   const dispatch = useAppDispatch();
 
   const handleNewMessage = async (type: InputModeType) => {
@@ -102,19 +103,27 @@ export default function Chat() {
       className='min-w-0 w-full'>
       <ChatHeader activeChat={activeChat} />
       <Messages
+        isPinned={isPinnedModal}
+        messages={isPinnedModal ? pinnedMessages.messages : messages}
         userId={userId}
         chatId={activeChat?.id}
         isToBootom={isToBootom}
         setIsToBottom={setIsToBottom}
       />
-      <div className='flex w-full items-center gap-2 max-w-[768px] mx-auto '>
-        <ChatInput handleNewMessage={handleNewMessage} message={message} setMessage={setMessage} />
-        <EmojiButtonComponent
-          className='-top-84 -left-70 md:-left-70 lg:-left-50'
-          color='#1da1f2'
-          setContent={setMessage}
-        />
-      </div>
+      {!isPinnedModal && (
+        <div className='flex w-full items-center gap-2 max-w-[768px] mx-auto '>
+          <ChatInput
+            handleNewMessage={handleNewMessage}
+            message={message}
+            setMessage={setMessage}
+          />
+          <EmojiButtonComponent
+            className='-top-84 -left-70 md:-left-70 lg:-left-50'
+            color='#1da1f2'
+            setContent={setMessage}
+          />
+        </div>
+      )}
     </ChatContainer>
   );
 }

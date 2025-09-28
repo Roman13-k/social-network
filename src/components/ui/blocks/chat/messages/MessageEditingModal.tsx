@@ -17,9 +17,10 @@ export default function MessageEditingModal({
   message,
 }: MessageEditingModalProps) {
   const userId = useAppSelector((state) => state.user.user?.id);
+  const chatId = useAppSelector((state) => state.chats.activeChat?.id);
   const dispatch = useAppDispatch();
 
-  const actions = getMessageActions(message, userId, dispatch, onClose);
+  const actions = getMessageActions(message, userId, chatId, dispatch, onClose);
 
   return (
     <ModalWithAutoClose
