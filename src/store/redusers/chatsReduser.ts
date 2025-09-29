@@ -102,7 +102,7 @@ export const chatsSlice = createSlice({
   extraReducers: (builder) => {
     addAsyncCase(builder, getOrCreateNewChat, () => {});
     addAsyncCase(builder, getUsersChats, (state, action) => {
-      if (action.payload.length < limit && state.chats.length !== 0) {
+      if (action.payload.length === 0) {
         state.offset = null;
       } else if (state.offset !== null) {
         state.chats.push(...action.payload);
