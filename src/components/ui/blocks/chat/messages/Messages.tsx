@@ -100,7 +100,7 @@ export default function Messages({
     let lastDate = "";
     return (
       <ul className='flex flex-col items-center gap-2 py-5 max-w-[768px] w-full mx-auto min-w-0'>
-        {messages.map((message, index) => {
+        {messages.map((message) => {
           const messageDate = messageDateFormat(message.created_at);
           const showHeader = messageDate !== lastDate;
           if (showHeader) lastDate = messageDate;

@@ -19,6 +19,7 @@ import ChatInput from "./ChatInput";
 import EmojiButtonComponent from "../../shared/buttons/EmojiButtonComponent";
 import ChatHeader from "./ChatHeader";
 import { InputModeType } from "@/types/chat";
+import { sendNotification } from "@/app/actions";
 
 export default function Chat() {
   const path = usePathname();
@@ -27,8 +28,9 @@ export default function Chat() {
   const [isToBootom, setIsToBottom] = useState(true);
   const { activeChat, chats } = useAppSelector((state) => state.chats);
   const userId = useAppSelector((state) => state.user.user?.id);
-  const { editingMessage, error, replyMessage, isPinnedModal, pinnedMessages, messages } =
-    useAppSelector((state) => state.messages);
+  const { editingMessage, replyMessage, isPinnedModal, pinnedMessages, messages } = useAppSelector(
+    (state) => state.messages,
+  );
   const dispatch = useAppDispatch();
 
   const handleNewMessage = async (type: InputModeType) => {
@@ -58,6 +60,12 @@ export default function Chat() {
       default: {
         await dispatch(
           newMessage({ chat_id: activeChat?.id, sender_id: userId, content: message }),
+        );
+        await sendNotification(
+          message,
+          activeChat.participants[0].id,
+          activeChat.participants[0].username,
+          `${process.env.NEXT_PUBLIC_HOST_URL}/chats/${chatId}`,
         );
         dispatch(incrOffset());
         setMessage("");

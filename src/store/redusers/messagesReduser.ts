@@ -1,9 +1,5 @@
 import { ErrorState } from "@/interfaces";
-import {
-  MessageInterface,
-  PinnedMessageInterface,
-  PinnedMessagesResponse,
-} from "@/interfaces/message";
+import { MessageInterface, PinnedMessagesResponse } from "@/interfaces/message";
 import { supabase } from "@/lib/supabaseClient";
 import { addAsyncCase } from "@/utils/addAsyncCase";
 import { mapAuthError } from "@/utils/mapAuthError";

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Fira_Code } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import Pwa from "@/components/ui/blocks/notification/Pwa";
 
 export const inter = Inter({
   subsets: ["latin"],
@@ -58,6 +59,7 @@ export default function RootLayout({
     <html lang='en'>
       <body className={`${inter.variable} ${firaCode.variable} antialiased`}>
         <Providers>{children}</Providers>
+        <Pwa />
       </body>
     </html>
   );

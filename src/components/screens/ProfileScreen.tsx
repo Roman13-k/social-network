@@ -10,6 +10,7 @@ import ProfileSkeleton from "../ui/shared/skeletons/ProfileSkeleton";
 import UserInfo from "../ui/blocks/profile/UserInfo";
 import UserInfluence from "../ui/blocks/profile/UserInfluence";
 import { isUserInterface } from "@/types/user";
+import NotificationRequest from "../ui/blocks/notification/NotificationRequest";
 
 export default function ProfileScreen() {
   const path = usePathname();
@@ -46,6 +47,7 @@ export default function ProfileScreen() {
             ) : (
               <>
                 <UserInfo user={currentProfile} />
+                <NotificationRequest />
                 {isOwnProfile && (
                   <DeleteDialog
                     handleAction={handleExit}
