@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
-import { H1 } from "../shared/text/H";
-import P from "../shared/text/P";
+import { H1 } from "../../shared/text/H";
+import P from "../../shared/text/P";
 
 export default function Intro() {
   return (

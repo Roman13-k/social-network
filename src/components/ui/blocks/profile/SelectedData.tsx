@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect } from "react";
-import { DataVariantsType } from "./UserInfluence";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loadUserLikedPosts, loadUserPosts } from "@/store/redusers/postsReduser";
 import Post from "../posts/Post";
@@ -10,6 +9,7 @@ import Comment from "../comments/Comment";
 import { loadUserComments, resetComments } from "@/store/redusers/commentsReduser";
 import RenderWithInfinityData from "../../layout/RenderWithInfinityData";
 import P from "../../shared/text/P";
+import { DataVariantsType } from "@/types/profile";
 
 export default function SelectedData({ selectedVariant }: { selectedVariant: DataVariantsType }) {
   const { loading, userLikedPosts, userLikedOffset, userOffset, userPosts } = useAppSelector(

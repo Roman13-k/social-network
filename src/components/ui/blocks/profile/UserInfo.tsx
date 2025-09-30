@@ -32,7 +32,7 @@ export default function UserInfo({ user }: { user: CurrentProfileType }) {
   };
 
   return (
-    <>
+    <section>
       <div className='flex sm:flex-row flex-col items-center gap-6'>
         <H1>Hi, {getUserName(user)}</H1>
         {!isUserInterface(user) && (
@@ -69,6 +69,6 @@ export default function UserInfo({ user }: { user: CurrentProfileType }) {
           ))}
         </ul>
       </div>
-    </>
+    </section>
   );
 }

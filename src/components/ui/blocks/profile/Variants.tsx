@@ -1,6 +1,7 @@
 "use client";
 import React, { Dispatch, SetStateAction } from "react";
-import { DataVariantsType, variants } from "./UserInfluence";
+import { variants } from "./UserInfluence";
+import { DataVariantsType } from "@/types/profile";
 
 interface VariantsProps {
   selectedVariant: DataVariantsType;

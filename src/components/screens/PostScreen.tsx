@@ -1,7 +1,6 @@
 "use client";
 import { redirect, useParams } from "next/navigation";
 import React, { useEffect } from "react";
-import MainContainer from "../ui/shared/containers/MainContainer";
 import Comments from "../ui/blocks/comments/Comments";
 import Post from "../ui/blocks/posts/Post";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -33,28 +32,26 @@ export default function PostScreen() {
   };
 
   return (
-    <MainContainer className='min-h-[100dvh]'>
-      <div className='flex flex-col items-center md:gap-8 gap-4 lg:gap-10 pt-10'>
-        <nav className='text-sm text-text-secondary mb-4 font-medium text-[18px] self-start'>
-          <Link
-            href='/'
-            className='text-text-secondary hover:text-accent font-medium text-[14px] md:text-[16px] lg:text-[18px]'>
-            Главная
-          </Link>{" "}
-          / Пост {params.id}
-        </nav>
-        {loading || userLoading ? (
-          <PostSkeleton />
-        ) : (
-          <div className='flex flex-col items-start gap-3 w-full max-w-[650px] mx-auto'>
-            <Post post={currentPost} />
-            {currentPost?.user?.id === user?.id && (
-              <DeleteDialog handleAction={handleDeletePost} trigerText='Delete post' />
-            )}
-          </div>
-        )}
-        <Comments postId={params.id} />
-      </div>
-    </MainContainer>
+    <div className='flex flex-col items-center md:gap-8 gap-4 lg:gap-10 pt-10'>
+      <nav className='text-sm text-text-secondary mb-4 font-medium text-[18px] self-start'>
+        <Link
+          href='/'
+          className='text-text-secondary hover:text-accent font-medium text-[14px] md:text-[16px] lg:text-[18px]'>
+          Главная
+        </Link>{" "}
+        / Пост {params.id}
+      </nav>
+      {loading || userLoading ? (
+        <PostSkeleton />
+      ) : (
+        <div className='flex flex-col items-start gap-3 w-full max-w-[650px] mx-auto'>
+          <Post post={currentPost} />
+          {currentPost?.user?.id === user?.id && (
+            <DeleteDialog handleAction={handleDeletePost} trigerText='Delete post' />
+          )}
+        </div>
+      )}
+      <Comments postId={params.id} />
+    </div>
   );
 }

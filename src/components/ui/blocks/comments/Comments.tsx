@@ -5,7 +5,7 @@ import Comment from "./Comment";
 import { loadComments, resetComments } from "@/store/redusers/commentsReduser";
 import CommentSkeleton from "../../shared/skeletons/CommentSkeleton";
 import RenderWithInfinityData from "../../layout/RenderWithInfinityData";
-import P from "../../shared/text/P";
+import RenderOrError from "../../layout/RenderOrError";
 
 export default function Comments({ postId }: { postId: string }) {
   const { comments, loading, offset, error } = useAppSelector((state) => state.comments);
@@ -23,22 +23,20 @@ export default function Comments({ postId }: { postId: string }) {
 
   return (
     <RenderWithInfinityData callback={loadMore} loading={loading}>
-      {error && !loading ? (
-        <P>{error.message}</P>
-      ) : (
+      <RenderOrError error={error}>
         <ul className='flex flex-col gap-3 md:gap-5 w-full max-w-[650px]'>
           {comments.map((comment) => (
             <Comment key={comment.id} comment={comment} />
           ))}
         </ul>
-      )}
 
-      {loading && (
-        <div className='flex flex-col gap-3 md:gap-5 w-full max-w-[650px]'>
-          <CommentSkeleton />
-          <CommentSkeleton />
-        </div>
-      )}
+        {loading && (
+          <div className='flex flex-col gap-3 md:gap-5 w-full max-w-[650px]'>
+            <CommentSkeleton />
+            <CommentSkeleton />
+          </div>
+        )}
+      </RenderOrError>
     </RenderWithInfinityData>
   );
 }

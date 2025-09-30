@@ -3,8 +3,7 @@ import SelectedData from "./SelectedData";
 import Variants from "./Variants";
 import { useSearchParams } from "next/navigation";
 import { isLiteralFromSet } from "@/utils/isLiteralFromSet";
-
-export type DataVariantsType = "posts" | "likedPosts" | "comments";
+import { DataVariantsType } from "@/types/profile";
 
 export const variants: DataVariantsType[] = ["posts", "likedPosts", "comments"];
 

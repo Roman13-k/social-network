@@ -39,3 +39,10 @@ export interface UserMainInfo {
   avatar_url: string;
   email?: string;
 }
+
+export interface SettingsRender {
+  label: string;
+  data: React.ReactNode;
+}
+
+export interface UserSettings {}
