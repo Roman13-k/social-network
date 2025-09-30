@@ -50,7 +50,7 @@ export default function ChatInput({ handleNewMessage, message, setMessage }: Cha
               handleNewMessage(activeMode);
             }
           }}
-          className='w-full md:py-3 py-1.5 px-2 pr-12 border-3 border-accent rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500'
+          className='w-full md:py-3 py-1.5 px-2 pr-12 border-3 placeholder:text-text-primary text-text-primary border-accent rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500'
           placeholder='Send a message...'
         />
         <button

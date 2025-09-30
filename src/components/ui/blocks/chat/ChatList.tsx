@@ -6,6 +6,7 @@ import P from "../../shared/text/P";
 import ChatSkeleton from "../../shared/skeletons/ChatSkeleton";
 import ChatElement from "./ChatElement";
 import RenderWithInfinityData from "../../layout/RenderWithInfinityData";
+import RenderOrError from "../../layout/RenderOrError";
 
 export default function ChatList() {
   const { chats, error, loading, offset, activeChat } = useAppSelector((state) => state.chats);
@@ -18,7 +19,14 @@ export default function ChatList() {
   };
 
   const chatsList = useMemo(
-    () => chats.map((chat) => <ChatElement key={chat.id} chat={chat} />),
+    () =>
+      chats.length === 0 && !loading ? (
+        <P variant={"secondary"} size={"xs"}>
+          You dont have any chats yet
+        </P>
+      ) : (
+        chats.map((chat) => <ChatElement key={chat.id} chat={chat} />)
+      ),
     [chats],
   );
 
@@ -28,21 +36,15 @@ export default function ChatList() {
         activeChat ? "hidden" : "block w-full"
       } lg:block lg:w-[300px] bg-white rounded-tl-lg min-w-0 shrink-0 px-4 py-5`}>
       <RenderWithInfinityData callback={loadChats} loading={loading}>
-        {error ? (
-          <P variant={"error"}>{error.message}</P>
-        ) : chats.length === 0 && !loading ? (
-          <P variant={"secondary"} size={"xs"}>
-            You dont have any chats yet
-          </P>
-        ) : (
-          chatsList
-        )}
-        {loading && (
-          <>
-            <ChatSkeleton />
-            <ChatSkeleton />
-          </>
-        )}
+        <RenderOrError error={error}>
+          {chatsList}
+          {loading && (
+            <>
+              <ChatSkeleton />
+              <ChatSkeleton />
+            </>
+          )}
+        </RenderOrError>
       </RenderWithInfinityData>
     </aside>
   );

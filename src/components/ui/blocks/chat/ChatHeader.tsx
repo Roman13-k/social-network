@@ -1,7 +1,6 @@
 "use client";
 import { ChatInterface } from "@/interfaces/chat";
-import { ArrowLeft, CircleUserRound, Pin, Trash2 } from "lucide-react";
-import Image from "next/image";
+import { ArrowLeft, Pin, Trash2 } from "lucide-react";
 import React from "react";
 import P from "../../shared/text/P";
 import Link from "next/link";
@@ -10,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { deleteChat } from "@/store/redusers/chatsReduser";
 import { useRouter } from "next/navigation";
 import { closePinned, openPinned } from "@/store/redusers/messagesReduser";
+import UserAvatar from "../../shared/UserAvatar";
 
 export default function ChatHeader({ activeChat }: { activeChat: ChatInterface | null }) {
   const router = useRouter();
@@ -42,17 +42,11 @@ export default function ChatHeader({ activeChat }: { activeChat: ChatInterface |
         {!isPinnedModal && (
           <>
             <Link href={`/profile/${activeChat?.participants[0].id}`}>
-              {activeChat?.participants?.[0]?.avatar_url ? (
-                <Image
-                  className='rounded-full'
-                  src={activeChat?.participants[0]?.avatar_url}
-                  alt='avatar'
-                  width={40}
-                  height={40}
-                />
-              ) : (
-                <CircleUserRound size={40} />
-              )}
+              <UserAvatar
+                href={activeChat?.participants?.[0]?.avatar_url}
+                size={40}
+                className='rounded-full'
+              />
             </Link>
 
             <div>

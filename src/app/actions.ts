@@ -45,7 +45,7 @@ export const sendNotification = async (
       );
       return "{}";
     } catch (e) {
-      return JSON.stringify({ error: "failed to send notification" });
+      return JSON.stringify({ error: e });
     }
   }
   return "{}";

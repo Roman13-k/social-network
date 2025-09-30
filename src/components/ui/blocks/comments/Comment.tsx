@@ -3,7 +3,6 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { deleteCommentById } from "@/store/redusers/commentsReduser";
 import { postDateFormat } from "@/utils/dates/postDateFormat";
 import { Trash2 } from "lucide-react";
-import Image from "next/image";
 import React from "react";
 import DeleteDialog from "../../shared/dialog/DeleteDialog";
 import P from "../../shared/text/P";
@@ -11,6 +10,7 @@ import Link from "next/link";
 import { updateCommentsCout } from "@/store/redusers/postsReduser";
 import { profanity } from "@/lib/profanity";
 import RenderContentWithLinks from "../../layout/RenderContentWithLinks";
+import UserAvatar from "../../shared/UserAvatar";
 
 export default function Comment({ comment }: { comment: CommentInterface }) {
   const dispatch = useAppDispatch();
@@ -26,12 +26,10 @@ export default function Comment({ comment }: { comment: CommentInterface }) {
       <Link
         href={userId === comment.user_id ? "/profile" : `/profile/${comment.user_id}`}
         className='mr-2'>
-        <Image
-          src={comment.user.avatar_url}
-          alt=''
-          width={40}
-          height={40}
+        <UserAvatar
           className='rounded-full md:scale-100 scale-90'
+          size={40}
+          href={comment.user.avatar_url}
         />
       </Link>
       <div className='flex flex-col gap-1 w-full'>

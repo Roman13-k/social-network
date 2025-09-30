@@ -7,9 +7,11 @@ export function getUserName(user: CurrentProfileType): string {
     : user.username;
 }
 
-export function getUserAvatar(user: CurrentProfileType): string | null {
+export function getUserAvatar(user: CurrentProfileType): string | undefined {
   if (!user) return "";
-  return "user_metadata" in user ? user.user_metadata?.avatar_url ?? null : user.avatar_url ?? null;
+  return "user_metadata" in user
+    ? user.user_metadata?.avatar_url ?? undefined
+    : user.avatar_url ?? undefined;
 }
 
 export function getUserEmail(user: CurrentProfileType): string | undefined {

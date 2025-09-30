@@ -5,7 +5,7 @@ import NotificationRequest from "../../notification/NotificationRequest";
 import { Switch } from "@/components/ui/shared/switch/switch";
 import { useTheme } from "next-themes";
 
-export default function getUserSettings() {
+export default function GetUserSettings() {
   const { setTheme, theme } = useTheme();
 
   const settings: SettingsRender[] = [

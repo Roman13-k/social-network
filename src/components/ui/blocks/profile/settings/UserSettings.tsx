@@ -1,11 +1,10 @@
 import React from "react";
 import { H2 } from "../../../shared/text/H";
-import NotificationRequest from "../../notification/NotificationRequest";
-import getUserSettings from "./getUserSettings";
 import Setting from "./Setting";
+import GetUserSettings from "./getUserSettings";
 
 export default function UserSettings() {
-  const settings = getUserSettings();
+  const settings = GetUserSettings();
 
   return (
     <section className='flex flex-col gap-2'>

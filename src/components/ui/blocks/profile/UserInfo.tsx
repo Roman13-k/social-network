@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import React from "react";
 import { H1 } from "../../shared/text/H";
 import P from "../../shared/text/P";
@@ -9,7 +8,7 @@ import { Button } from "../../shared/buttons/button";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getOrCreateNewChat } from "@/store/redusers/chatsReduser";
 import { useRouter } from "next/navigation";
-import { CircleUserRound } from "lucide-react";
+import UserAvatar from "../../shared/UserAvatar";
 
 export default function UserInfo({ user }: { user: CurrentProfileType }) {
   const router = useRouter();
@@ -46,17 +45,11 @@ export default function UserInfo({ user }: { user: CurrentProfileType }) {
         )}
       </div>
       <div className='flex items-center lg:gap-5 gap-3'>
-        {userAvatar ? (
-          <Image
-            src={userAvatar}
-            width={196}
-            height={196}
-            alt='profile'
-            className='rounded-full w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48'
-          />
-        ) : (
-          <CircleUserRound size={196} className='w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48' />
-        )}
+        <UserAvatar
+          href={userAvatar}
+          size={196}
+          className='rounded-full w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48'
+        />
 
         <ul className='flex flex-col gap-2 lg:gap-3'>
           {userInfo.map((inf, index) => (

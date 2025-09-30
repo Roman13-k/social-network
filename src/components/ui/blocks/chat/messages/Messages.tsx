@@ -7,6 +7,7 @@ import { clearMessages, loadMessages, loadPinMessages } from "@/store/redusers/m
 import MessageSkeleton from "@/components/ui/shared/skeletons/MessageSkeleton";
 import { messageDateFormat } from "@/utils/dates/messageDateFormat";
 import { MessageInterface } from "@/interfaces/message";
+import RenderOrError from "@/components/ui/layout/RenderOrError";
 
 interface MessagesProps {
   messages: MessageInterface[];
@@ -146,20 +147,16 @@ export default function Messages({
     <div
       ref={messagesRef}
       className='h-full flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200 px-3 md:px-6 lg:px-8'>
-      {error ? (
-        <P className='text-center' variant={"error"}>
-          {error.message}
-        </P>
-      ) : (
-        messagesList
-      )}
-      {loading && messages.length === 0 && (
-        <div className='flex flex-col items-start gap-4 max-w-[768px] w-full mx-auto min-w-0'>
-          <MessageSkeleton />
-          <MessageSkeleton />
-        </div>
-      )}
-      <div ref={bottomRef} className='block'></div>
+      <RenderOrError error={error}>
+        {messagesList}
+        {loading && messages.length === 0 && (
+          <div className='flex flex-col items-start gap-4 max-w-[768px] w-full mx-auto min-w-0'>
+            <MessageSkeleton />
+            <MessageSkeleton />
+          </div>
+        )}
+        <div ref={bottomRef} className='block'></div>
+      </RenderOrError>
     </div>
   );
 }

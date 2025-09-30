@@ -1,7 +1,6 @@
 "use client";
 import { PostInterface } from "@/interfaces/post";
 import { postDateFormat } from "@/utils/dates/postDateFormat";
-import Image from "next/image";
 import React, { useRef, useState } from "react";
 import LikeButton from "../../shared/buttons/LikeButton";
 import Link from "next/link";
@@ -16,6 +15,7 @@ import RenderContentWithLinks from "../../layout/RenderContentWithLinks";
 import PostImages from "./PostImages";
 import PostViews from "./PostViews";
 import { useObserver } from "@/hooks/useObserver";
+import UserAvatar from "../../shared/UserAvatar";
 
 export default function Post({ post, type }: { post: PostInterface; type?: PostsType }) {
   const [commentModal, setCommentModal] = useState(false);
@@ -50,11 +50,9 @@ export default function Post({ post, type }: { post: PostInterface; type?: Posts
         <Link
           className='md:mr-2 mr-1 cursor-pointer'
           href={userId === post?.user?.id ? "/profile" : `/profile/${post?.user?.id}`}>
-          <Image
-            src={post?.user?.avatar_url ?? "/"}
-            alt=''
-            width={40}
-            height={40}
+          <UserAvatar
+            href={post?.user?.avatar_url}
+            size={40}
             className='rounded-full lg:scale-100 md:scale-95 scale-85'
           />
         </Link>

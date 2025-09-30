@@ -15,6 +15,8 @@
   --color-button: #17bf63;
   --color-like: #e0245e;
   --color-border: #aab8c2;
+  --color-white: #fff;
+  --color-black: #14171a;
 
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -29,6 +31,22 @@
 
   --font-sans: "Inter", sans-serif;
   --font-mono: "Fira Code", monospace;
+}
+
+.dark {
+  --color-background-primary: #0d1117;
+  --color-background-secondary: #161b22;
+  --color-background-modal: #1b1f26;
+  --color-card: #161b22;
+  --color-text-primary: #c9d1d9;
+  --color-text-secondary: #8b949e;
+  --color-accent: #1da1f2;
+  --color-fiol: #a66fff;
+  --color-button: #17bf63;
+  --color-like: #ff375f;
+  --color-border: #30363d;
+  --color-white: #14171a;
+  --color-black: #fff;
 }
 
 html,
