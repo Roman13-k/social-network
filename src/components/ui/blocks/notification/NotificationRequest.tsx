@@ -4,6 +4,7 @@ import { useAppSelector } from "@/store/hooks";
 import { urlBase64ToUint8Array } from "@/utils/validate/urlBase64ToUint8Array";
 import { BellOff, BellRing } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { Switch } from "../../shared/switch/switch";
 
 export default function NotificationRequest() {
   const user = useAppSelector((state) => state.user.user);
@@ -12,7 +13,25 @@ export default function NotificationRequest() {
   >("granted");
 
   useEffect(() => {
-    setNotificationPermission(Notification.permission);
+    async function checkNotificationState() {
+      if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+        setNotificationPermission("denied");
+        return;
+      }
+
+      try {
+        const reg = await navigator.serviceWorker.ready;
+        const sub = await reg.pushManager.getSubscription();
+        if (sub) {
+          setNotificationPermission("granted");
+        } else {
+          setNotificationPermission(Notification.permission);
+        }
+      } catch {
+        setNotificationPermission("default");
+      }
+    }
+    checkNotificationState();
   }, []);
 
   const showNotification = () => {
@@ -80,12 +99,11 @@ export default function NotificationRequest() {
   };
 
   return (
-    <>
-      {notificationPermission === "granted" ? (
-        <BellRing onClick={removeNotification} />
-      ) : (
-        <BellOff onClick={showNotification} />
-      )}
-    </>
+    <Switch
+      checked={notificationPermission === "granted"}
+      onCheckedChange={(checked) => {
+        checked ? removeNotification : showNotification;
+      }}
+    />
   );
 }
