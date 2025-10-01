@@ -8,6 +8,7 @@ import MessageSkeleton from "@/components/ui/shared/skeletons/MessageSkeleton";
 import { messageDateFormat } from "@/utils/dates/messageDateFormat";
 import { MessageInterface } from "@/interfaces/message";
 import RenderOrError from "@/components/ui/layout/RenderOrError";
+import Image from "next/image";
 
 interface MessagesProps {
   messages: MessageInterface[];
@@ -26,6 +27,7 @@ export default function Messages({
   messages,
   isPinned = false,
 }: MessagesProps) {
+  const activeChat = useAppSelector((state) => state.chats.activeChat);
   const { offset, loading, error, pinOffset } = useAppSelector((state) => state.messages);
 
   const dispatch = useAppDispatch();
@@ -101,15 +103,18 @@ export default function Messages({
     let lastDate = "";
     return (
       <ul className='flex flex-col items-center gap-2 py-5 max-w-[768px] w-full mx-auto min-w-0'>
-        {messages.map((message) => {
+        {messages.map((message, index) => {
           const messageDate = messageDateFormat(message.created_at);
           const showHeader = messageDate !== lastDate;
           if (showHeader) lastDate = messageDate;
 
-          // const nextMessage = messages[index + 1];
-          // const showFooter =
-          //   message.sender_id !== userId &&
-          //   (!nextMessage || nextMessage.sender_id !== message.sender_id);
+          let showFooter = false;
+          if (activeChat && activeChat?.participants?.length > 1) {
+            const nextMessage = messages[index + 1];
+            showFooter =
+              message.sender_id !== userId &&
+              (!nextMessage || nextMessage.sender_id !== message.sender_id);
+          }
 
           return (
             <React.Fragment key={message.id}>
@@ -124,7 +129,7 @@ export default function Messages({
                 className={`${
                   message.sender_id === userId ? "self-end " : "self-start"
                 } flex gap-2 w-full relative max-w-[85%]`}>
-                {/* {showFooter && (
+                {showFooter && (
                   <Image
                     className='rounded-full self-end absolute top-1/2 left-[-50px]'
                     src={activeChat?.participants[0].avatar_url ?? "/default-avatar.png"}
@@ -132,7 +137,7 @@ export default function Messages({
                     width={40}
                     height={40}
                   />
-                )} */}
+                )}
 
                 <Message messagesRef={messagesRef} message={message} />
               </li>

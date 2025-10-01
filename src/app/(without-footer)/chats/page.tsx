@@ -1,4 +1,4 @@
-import ChatDefault from "@/components/ui/blocks/chat/ChatDefault";
+import ChatDefault from "@/components/ui/blocks/chat/chat/ChatDefault";
 import { Metadata } from "next";
 import React from "react";
 

@@ -1,6 +1,6 @@
+import ChatContainer from "@/components/ui/shared/containers/ChatContainer";
+import { H2 } from "@/components/ui/shared/text/H";
 import React from "react";
-import ChatContainer from "../../shared/containers/ChatContainer";
-import { H2 } from "../../shared/text/H";
 
 export default function ChatDefault() {
   return (

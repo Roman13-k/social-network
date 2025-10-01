@@ -20,49 +20,6 @@ interface MiniFormProps<T extends FieldValues> {
   name: Path<T>;
 }
 
-const avatarSchema = z.object({
-  avatar: z
-    .any()
-    .refine((files) => files && files.length > 0, "Выберите файл")
-    .transform((files) => files[0] as File),
-});
-
-const bgSchema = z.object({
-  background: z
-    .any()
-    .refine((files) => files && files.length > 0, "Выберите файл")
-    .transform((files) => files[0] as File),
-});
-
-function MiniForm<T extends FieldValues>({
-  action,
-  resolver,
-  name,
-  ...props
-}: MiniFormProps<T> & React.ComponentProps<"input">) {
-  const loading = useAppSelector((state) => state.user.loading);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<T>({ mode: "onSubmit", resolver });
-
-  const onSubmit: SubmitHandler<T> = (data) => action(data);
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)} className='flex gap-2.5 items-center'>
-      <Input
-        error={errors[name]?.message as string | undefined}
-        {...register(name, { required: true })}
-        {...props}
-      />
-      <Button loading={loading} type='submit' variant='secondary'>
-        Save
-      </Button>
-    </form>
-  );
-}
-
 export default function GetUserSettings() {
   const userId = useAppSelector((state) => state?.user?.user?.id);
   const { setTheme, theme } = useTheme();
@@ -130,3 +87,46 @@ export default function GetUserSettings() {
 
   return settings;
 }
+
+function MiniForm<T extends FieldValues>({
+  action,
+  resolver,
+  name,
+  ...props
+}: MiniFormProps<T> & React.ComponentProps<"input">) {
+  const loading = useAppSelector((state) => state.user.loading);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<T>({ mode: "onSubmit", resolver });
+
+  const onSubmit: SubmitHandler<T> = (data) => action(data);
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className='flex gap-2.5 items-center'>
+      <Input
+        error={errors[name]?.message as string | undefined}
+        {...register(name, { required: true })}
+        {...props}
+      />
+      <Button loading={loading} type='submit' variant='secondary'>
+        Save
+      </Button>
+    </form>
+  );
+}
+
+const avatarSchema = z.object({
+  avatar: z
+    .any()
+    .refine((files) => files && files.length > 0, "Выберите файл")
+    .transform((files) => files[0] as File),
+});
+
+const bgSchema = z.object({
+  background: z
+    .any()
+    .refine((files) => files && files.length > 0, "Выберите файл")
+    .transform((files) => files[0] as File),
+});

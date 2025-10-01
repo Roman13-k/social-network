@@ -2,14 +2,14 @@
 import { ChatInterface } from "@/interfaces/chat";
 import { ArrowLeft, Pin, Trash2 } from "lucide-react";
 import React from "react";
-import P from "../../shared/text/P";
 import Link from "next/link";
-import DeleteDialog from "../../shared/dialog/DeleteDialog";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { deleteChat } from "@/store/redusers/chatsReduser";
 import { useRouter } from "next/navigation";
 import { closePinned, openPinned } from "@/store/redusers/messagesReduser";
-import UserAvatar from "../../shared/UserAvatar";
+import UserAvatar from "@/components/ui/shared/UserAvatar";
+import P from "@/components/ui/shared/text/P";
+import DeleteDialog from "@/components/ui/shared/dialog/DeleteDialog";
 
 export default function ChatHeader({ activeChat }: { activeChat: ChatInterface | null }) {
   const router = useRouter();

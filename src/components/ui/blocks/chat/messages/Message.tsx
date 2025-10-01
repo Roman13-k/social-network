@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getUserName } from "@/utils/userGetInfo";
 import { getMessageById, startReply } from "@/store/redusers/messagesReduser";
 import { Pin } from "lucide-react";
+import VoiceMessage from "./VoiceMessage";
 
 interface MessageProps {
   message: MessageInterface;
@@ -72,6 +73,12 @@ export default function Message({ message, messagesRef }: MessageProps) {
         className='break-words whitespace-normal'
         content={message.content}
       />
+      {message.audio_url && (
+        <VoiceMessage
+          url={message.audio_url}
+          color={message.sender_id === user?.id ? "#1da1f2" : "#9b51e0"}
+        />
+      )}
 
       <span
         className='self-end text-[14px] text-text-secondary flex items-center'

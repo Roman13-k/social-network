@@ -2,9 +2,9 @@
 import { ChatInterface } from "@/interfaces/chat";
 import Link from "next/link";
 import React from "react";
-import P from "../../shared/text/P";
 import { useAppSelector } from "@/store/hooks";
-import UserAvatar from "../../shared/UserAvatar";
+import UserAvatar from "@/components/ui/shared/UserAvatar";
+import P from "@/components/ui/shared/text/P";
 
 export default function ChatElement({ chat }: { chat: ChatInterface }) {
   const curChat = useAppSelector((state) => state.chats.activeChat);

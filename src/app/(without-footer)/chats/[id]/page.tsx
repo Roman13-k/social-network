@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import Chat from "@/components/ui/blocks/chat/Chat";
+import Chat from "@/components/ui/blocks/chat/chat/Chat";
 import React from "react";
 import { supabase } from "@/lib/supabaseClient";
 

@@ -3,8 +3,8 @@ import React from "react";
 import { Pencil, Reply, X } from "lucide-react";
 import { useAppDispatch } from "@/store/hooks";
 import { canselEdit, canselReply } from "@/store/redusers/messagesReduser";
-import MessagePreview from "./messages/MessagePreview";
 import { InputModeType } from "@/types/chat";
+import MessagePreview from "../messages/MessagePreview";
 
 interface InputHeaderProps {
   message: MessageInterface;

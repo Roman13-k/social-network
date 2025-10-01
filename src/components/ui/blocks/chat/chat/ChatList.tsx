@@ -2,11 +2,11 @@
 import { useAppSelector } from "@/store/hooks";
 import { getUsersChats } from "@/store/redusers/chatsReduser";
 import React, { useMemo } from "react";
-import P from "../../shared/text/P";
-import ChatSkeleton from "../../shared/skeletons/ChatSkeleton";
+import P from "../../../shared/text/P";
+import ChatSkeleton from "../../../shared/skeletons/ChatSkeleton";
 import ChatElement from "./ChatElement";
-import RenderWithInfinityData from "../../layout/RenderWithInfinityData";
-import RenderOrError from "../../layout/RenderOrError";
+import RenderWithInfinityData from "../../../layout/RenderWithInfinityData";
+import RenderOrError from "../../../layout/RenderOrError";
 
 export default function ChatList() {
   const { chats, error, loading, offset, activeChat } = useAppSelector((state) => state.chats);

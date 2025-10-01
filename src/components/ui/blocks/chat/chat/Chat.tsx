@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import ChatContainer from "../../shared/containers/ChatContainer";
+import ChatContainer from "../../../shared/containers/ChatContainer";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { enterChat, leaveChat } from "@/store/redusers/chatsReduser";
 import {
@@ -13,10 +13,9 @@ import {
   updateMessage,
 } from "@/store/redusers/messagesReduser";
 import { supabase } from "@/lib/supabaseClient";
-import Messages from "./messages/Messages";
+import Messages from "../messages/Messages";
 import { usePathname } from "next/navigation";
-import ChatInput from "./ChatInput";
-import EmojiButtonComponent from "../../shared/buttons/EmojiButtonComponent";
+import ChatInput from "../input/ChatInput";
 import ChatHeader from "./ChatHeader";
 import { InputModeType } from "@/types/chat";
 import { sendNotification } from "@/app/actions";
@@ -119,18 +118,7 @@ export default function Chat() {
         setIsToBottom={setIsToBottom}
       />
       {!isPinnedModal && (
-        <div className='flex w-full items-center gap-2 max-w-[768px] mx-auto '>
-          <ChatInput
-            handleNewMessage={handleNewMessage}
-            message={message}
-            setMessage={setMessage}
-          />
-          <EmojiButtonComponent
-            className='-top-84 -left-70 md:-left-70 lg:-left-50'
-            color='#1da1f2'
-            setContent={setMessage}
-          />
-        </div>
+        <ChatInput handleNewMessage={handleNewMessage} message={message} setMessage={setMessage} />
       )}
     </ChatContainer>
   );

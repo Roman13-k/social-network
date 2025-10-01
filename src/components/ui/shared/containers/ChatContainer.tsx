@@ -18,7 +18,6 @@ export default function ChatContainer({
   }, [user?.id, dispatch]);
 
   const hasCustomBg = !!profile?.chat_background;
-  console.log(profile);
 
   return (
     <div
