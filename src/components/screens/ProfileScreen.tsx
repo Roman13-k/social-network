@@ -41,7 +41,7 @@ export default function ProfileScreen() {
             <ProfileSkeleton />
           ) : (
             <>
-              <div className='flex md:flex-row flex-col gap-6 justify-between w-full'>
+              <div className='flex lg:flex-row flex-col gap-6 justify-between w-full'>
                 <UserInfo user={currentProfile} />
                 {isOwnProfile && <UserSettings />}
               </div>

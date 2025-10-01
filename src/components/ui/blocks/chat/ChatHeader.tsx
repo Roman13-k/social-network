@@ -24,7 +24,7 @@ export default function ChatHeader({ activeChat }: { activeChat: ChatInterface |
   };
 
   return (
-    <div className='py-4 px-5 h-[79px] bg-white w-full rounded-tr-lg'>
+    <div className='py-4 px-5 h-[79px] bg-white w-full rounded-tr-lg z-1'>
       <div className='flex gap-2 items-center h-full w-full'>
         {isPinnedModal ? (
           <div className='flex gap-3'>

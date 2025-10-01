@@ -87,6 +87,15 @@ export default function NotificationRequest() {
   };
 
   const removeNotification = async () => {
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) {
+        await sub.unsubscribe();
+      }
+    } catch (err) {
+      console.log("Unsubscribe error:", err);
+    }
     setNotificationPermission("denied");
 
     const { error } = await supabase.from("subscriptions").delete().eq("user_id", user?.id);
@@ -100,7 +109,7 @@ export default function NotificationRequest() {
     <Switch
       checked={notificationPermission === "granted"}
       onCheckedChange={(checked) => {
-        checked ? removeNotification() : showNotification();
+        checked ? showNotification() : removeNotification();
       }}
     />
   );

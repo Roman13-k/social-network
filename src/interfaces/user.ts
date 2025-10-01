@@ -37,6 +37,7 @@ export interface UserMainInfo {
   id: string;
   username: string;
   avatar_url: string;
+  chat_background?: string;
   email?: string;
 }
 

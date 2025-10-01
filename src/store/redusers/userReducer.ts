@@ -7,6 +7,7 @@ import { addAsyncCase } from "@/utils/addAsyncCase";
 import { mapAuthError } from "@/utils/mapAuthError";
 import { mapUserWithStats } from "@/utils/mapUserWithStats";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { User } from "@supabase/supabase-js";
 
 interface UserState {
   user: UserInterface | null;
@@ -100,6 +101,17 @@ export const getProfileById = createAsyncThunk<
   return mapUserWithStats(data, statsData?.[0]);
 });
 
+export const changeUserInfo = createAsyncThunk<User, object, { rejectValue: ErrorState }>(
+  "user/changeUserInfo",
+  async (newUser) => {
+    const { error, data } = await supabase.auth.updateUser({
+      data: newUser,
+    });
+    if (error) throw error;
+    return data.user;
+  },
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -134,6 +146,16 @@ export const userSlice = createSlice({
         state.error = { message: "No profile with this ID", code: "not_profile" };
       } else {
         state.error = null;
+      }
+    });
+    addAsyncCase(builder, changeUserInfo, (state, action) => {
+      if (state.user && action.payload?.user_metadata) {
+        state.user.user_metadata = {
+          ...state.user.user_metadata,
+          ...Object.fromEntries(
+            Object.entries(action.payload.user_metadata).filter(([_, v]) => v !== undefined),
+          ),
+        };
       }
     });
   },
