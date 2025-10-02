@@ -1,9 +1,16 @@
 import React, { useEffect, useRef } from "react";
 
-export default function AudioWaveform({ audioUrl, color }: { audioUrl: string; color: string }) {
+interface AudioWaveformProps {
+  audioUrl: string;
+  color: string;
+  progress: number; // от 0 до 1
+}
+
+export default function AudioWaveform({ audioUrl, color, progress }: AudioWaveformProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const samples = 100;
-  const MIN_HEIGHT = 10;
+  const samples = 200;
+  const MIN_HEIGHT = 3;
+  const filteredDataRef = useRef<number[]>([]);
 
   useEffect(() => {
     async function drawAudioWave() {
@@ -22,25 +29,62 @@ export default function AudioWaveform({ audioUrl, color }: { audioUrl: string; c
         filteredData.push(sum / blockSize);
       }
 
-      const canvas = canvasRef.current!;
-      const ctx = canvas.getContext("2d")!;
-      const width = canvas.width;
-      const height = canvas.height;
-
-      ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = color;
-
-      const barWidth = width / samples;
-
-      normalizeData(filteredData).forEach((value, i) => {
-        const barHeight = MIN_HEIGHT + value * (height - MIN_HEIGHT);
-        ctx.fillRect(i * barWidth, (height - barHeight) / 2, barWidth * 0.8, barHeight);
-      });
+      filteredDataRef.current = normalizeData(filteredData);
+      draw(progress);
     }
-    drawAudioWave();
-  }, []);
 
-  return <canvas ref={canvasRef} width={300} height={60} />;
+    drawAudioWave();
+  }, [audioUrl]);
+
+  useEffect(() => {
+    draw(progress);
+  }, [progress]);
+
+  function draw(progress: number) {
+    const canvas = canvasRef.current;
+    if (!canvas || filteredDataRef.current.length === 0) return;
+
+    const ctx = canvas.getContext("2d")!;
+    const width = canvas.width;
+    const height = canvas.height;
+
+    ctx.clearRect(0, 0, width, height);
+
+    const barWidth = width / samples;
+    // Вычисляем точный прогресс в терминах количества столбиков
+    const progressInBars = progress * samples;
+
+    filteredDataRef.current.forEach((value, i) => {
+      const barHeight = MIN_HEIGHT + value * (height - MIN_HEIGHT);
+      const x = i * barWidth;
+      const y = (height - barHeight) / 2;
+
+      // Полностью закрашенные столбики (прогресс прошел полностью этот столбик)
+      if (i < Math.floor(progressInBars)) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, barWidth * 0.8, barHeight);
+      }
+      // Текущий частично закрашенный столбик
+      else if (i === Math.floor(progressInBars)) {
+        const partialProgress = progressInBars - i;
+
+        // Фоновая (прозрачная) часть
+        ctx.fillStyle = `${color}66`;
+        ctx.fillRect(x, y, barWidth * 0.8, barHeight);
+
+        // Закрашенная часть поверх
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, barWidth * 0.8 * partialProgress, barHeight);
+      }
+      // Еще не затронутые столбики
+      else {
+        ctx.fillStyle = `${color}66`;
+        ctx.fillRect(x, y, barWidth * 0.8, barHeight);
+      }
+    });
+  }
+
+  return <canvas ref={canvasRef} width={300} height={25} />;
 }
 
 function normalizeData(data: number[]) {

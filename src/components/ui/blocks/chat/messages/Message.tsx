@@ -57,7 +57,7 @@ export default function Message({ message, messagesRef }: MessageProps) {
       className={`${
         message.sender_id === user?.id ? "bg-white ml-auto" : "bg-button/85"
       } py-1.5 md:py-2 md:px-4 px-1.5 rounded-[20px] border border-border flex flex-col max-w-full relative`}>
-      {replyMessage.id && (
+      {replyMessage.id && replyMessage.content && (
         <MessagePreview
           color={message.sender_id === user?.id ? "#1da1f2" : "#9b51e0"}
           title={
@@ -68,11 +68,14 @@ export default function Message({ message, messagesRef }: MessageProps) {
           content={replyMessage.content}
         />
       )}
-      <RenderContentWithLinks
-        varinant='default'
-        className='break-words whitespace-normal'
-        content={message.content}
-      />
+      {message.content && (
+        <RenderContentWithLinks
+          varinant='default'
+          className='break-words whitespace-normal'
+          content={message.content}
+        />
+      )}
+
       {message.audio_url && (
         <VoiceMessage
           url={message.audio_url}

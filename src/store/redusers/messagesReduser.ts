@@ -196,10 +196,6 @@ export const messagesSlice = createSlice({
     closePinned: (state) => {
       state.isPinnedModal = false;
     },
-    // fake for test
-    addVoice: (state, action) => {
-      state.messages[state.messages.length - 1].audio_url = action.payload;
-    },
   },
   extraReducers: (builder) => {
     addAsyncCase(builder, loadMessages, (state, action) => {
@@ -262,7 +258,6 @@ export const {
   canselReply,
   openPinned,
   closePinned,
-  addVoice,
 } = messagesSlice.actions;
 
 export default messagesSlice.reducer;

@@ -24,7 +24,7 @@ export const getMessageActions = (
   onClose: () => void,
 ): Action[] => {
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(message.content);
+    if (message.content) await navigator.clipboard.writeText(message.content);
     onClose();
   };
 

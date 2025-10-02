@@ -27,7 +27,7 @@ export default function ChatInput({ handleNewMessage, message, setMessage }: Cha
   };
 
   useEffect(() => {
-    if (editingMessage && !replyMessage) {
+    if (editingMessage && editingMessage.content && !replyMessage) {
       setActiveMode("edit");
       setMessage(editingMessage.content);
     } else if (replyMessage && !editingMessage) {

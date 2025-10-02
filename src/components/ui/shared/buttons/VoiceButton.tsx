@@ -1,5 +1,5 @@
-import { useAppDispatch } from "@/store/hooks";
-import { addVoice } from "@/store/redusers/messagesReduser";
+import { supabase } from "@/lib/supabaseClient";
+import { useAppSelector } from "@/store/hooks";
 import { stopwatchTimeFormat } from "@/utils/dates/stopwatchTimeFormat";
 import { Mic, Pause, Send } from "lucide-react";
 import React, { Dispatch, SetStateAction, useRef } from "react";
@@ -12,7 +12,8 @@ interface VoiceButtonProps {
 }
 
 export default function VoiceButton({ className, isActive, setIsActive, time }: VoiceButtonProps) {
-  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user.user);
+  const activeChat = useAppSelector((state) => state.chats.activeChat);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<BlobPart[]>([]);
 
@@ -41,19 +42,29 @@ export default function VoiceButton({ className, isActive, setIsActive, time }: 
     }
   };
 
-  const handleSendRecording = () => {
+  const handleSendRecording = async () => {
     if (!mediaRecorderRef.current) return;
-    mediaRecorderRef.current.onstop = () => {
-      const audioBlob = new Blob(chunksRef.current, {
-        type: "audio/ogg; codecs=opus",
+
+    mediaRecorderRef.current.onstop = async () => {
+      const audioBlob = new Blob(chunksRef.current, { type: "audio/ogg; codecs=opus" });
+      const fileName = `voice_${Date.now()}.ogg`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("voices")
+        .upload(fileName, audioBlob);
+      if (uploadError) return console.error(uploadError);
+
+      const { data } = supabase.storage.from("voices").getPublicUrl(fileName);
+
+      const { error: insertError } = await supabase.from("messages").insert({
+        audio_url: data.publicUrl,
+        sender_id: user?.id,
+        chat_id: activeChat?.id,
       });
 
-      const audioUrl = URL.createObjectURL(audioBlob);
-      dispatch(addVoice(audioUrl));
+      if (insertError) console.error(insertError);
     };
-    if (mediaRecorderRef.current.state !== "inactive") {
-      mediaRecorderRef.current.stop();
-    }
+    mediaRecorderRef.current.stop();
     setIsActive(false);
   };
 
