@@ -3,6 +3,7 @@ import { Inter, Fira_Code } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import Pwa from "@/components/ui/blocks/notification/Pwa";
+import Online from "@/components/ui/blocks/chat/Online";
 
 export const inter = Inter({
   subsets: ["latin"],
@@ -58,8 +59,11 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={`${inter.variable} ${firaCode.variable} antialiased`}>
-        <Providers>{children}</Providers>
-        <Pwa />
+        <Providers>
+          {children}
+          <Online />
+          <Pwa />
+        </Providers>
       </body>
     </html>
   );

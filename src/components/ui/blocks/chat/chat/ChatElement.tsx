@@ -20,7 +20,11 @@ export default function ChatElement({ chat }: { chat: ChatInterface }) {
         <div className='flex flex-col gap-1 flex-1 min-w-0'>
           <P>{chat?.participants[0]?.username}</P>
           <P className='truncate' variant='secondary' size='xs'>
-            {chat.lastMessage?.content ?? "Send first message"}
+            {chat.lastMessage?.content
+              ? chat.lastMessage?.content
+              : chat.lastMessage?.audio_url
+              ? "Voice message"
+              : "Send first message"}
           </P>
         </div>
       </div>

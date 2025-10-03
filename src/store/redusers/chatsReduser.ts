@@ -1,5 +1,6 @@
 import { ErrorState } from "@/interfaces";
 import { ChatInterface } from "@/interfaces/chat";
+import { MessageInterface } from "@/interfaces/message";
 import { UserMainInfo } from "@/interfaces/user";
 import { supabase } from "@/lib/supabaseClient";
 import { addAsyncCase } from "@/utils/addAsyncCase";
@@ -51,15 +52,19 @@ export const getUsersChats = createAsyncThunk<
   { rejectValue: ErrorState }
 >("/chats/getUsersChats", async ({ userId, offset }, { rejectWithValue }) => {
   const { data, error } = await supabase
-    .from("chats_with_last_message")
+    .from("chats")
     .select(
-      `id,
-      created_at,
-      last_message,
-      chat_participants (
-        user_id,
-        profiles ( id, username, avatar_url )
-      )`,
+      `
+    id,
+    created_at,
+    last_message:messages!last_message_id (
+      *
+    ),
+    chat_participants (
+      user_id,
+      profiles ( id, username, avatar_url )
+    )
+  `,
     )
     .range(offset, offset + limit - 1);
 
@@ -68,7 +73,7 @@ export const getUsersChats = createAsyncThunk<
   return data.map((chat) => ({
     id: chat.id,
     created_at: chat.created_at,
-    lastMessage: chat.last_message,
+    lastMessage: chat.last_message as unknown as MessageInterface | undefined,
     participants: chat.chat_participants
       .map((p) => p.profiles as unknown as UserMainInfo)
       .filter((u) => u.id !== userId),

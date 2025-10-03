@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 interface AudioWaveformProps {
   audioUrl: string;
   color: string;
-  progress: number; // от 0 до 1
+  progress: number;
 }
 
 export default function AudioWaveform({ audioUrl, color, progress }: AudioWaveformProps) {
@@ -47,11 +47,9 @@ export default function AudioWaveform({ audioUrl, color, progress }: AudioWavefo
     const ctx = canvas.getContext("2d")!;
     const width = canvas.width;
     const height = canvas.height;
-
     ctx.clearRect(0, 0, width, height);
 
     const barWidth = width / samples;
-    // Вычисляем точный прогресс в терминах количества столбиков
     const progressInBars = progress * samples;
 
     filteredDataRef.current.forEach((value, i) => {
@@ -59,32 +57,16 @@ export default function AudioWaveform({ audioUrl, color, progress }: AudioWavefo
       const x = i * barWidth;
       const y = (height - barHeight) / 2;
 
-      // Полностью закрашенные столбики (прогресс прошел полностью этот столбик)
       if (i < Math.floor(progressInBars)) {
         ctx.fillStyle = color;
-        ctx.fillRect(x, y, barWidth * 0.8, barHeight);
-      }
-      // Текущий частично закрашенный столбик
-      else if (i === Math.floor(progressInBars)) {
-        const partialProgress = progressInBars - i;
-
-        // Фоновая (прозрачная) часть
+      } else {
         ctx.fillStyle = `${color}66`;
-        ctx.fillRect(x, y, barWidth * 0.8, barHeight);
-
-        // Закрашенная часть поверх
-        ctx.fillStyle = color;
-        ctx.fillRect(x, y, barWidth * 0.8 * partialProgress, barHeight);
       }
-      // Еще не затронутые столбики
-      else {
-        ctx.fillStyle = `${color}66`;
-        ctx.fillRect(x, y, barWidth * 0.8, barHeight);
-      }
+      ctx.fillRect(x, y, barWidth * 0.8, barHeight);
     });
   }
 
-  return <canvas ref={canvasRef} width={300} height={25} />;
+  return <canvas style={{ width: "100%" }} ref={canvasRef} width={300} height={25} />;
 }
 
 function normalizeData(data: number[]) {

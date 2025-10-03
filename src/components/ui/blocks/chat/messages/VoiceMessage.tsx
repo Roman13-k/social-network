@@ -1,7 +1,7 @@
 import AudioWaveform from "@/components/ui/shared/AudioWaveform";
 import { minSecFormat } from "@/utils/dates/minSecFormat";
 import { Play, Pause } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { MouseEvent, useEffect, useRef, useState } from "react";
 
 interface VoiceMessageProps {
   color: string;
@@ -40,7 +40,9 @@ export default function VoiceMessage({ color, url }: VoiceMessageProps) {
     };
   }, [url]);
 
-  const togglePlay = () => {
+  const togglePlay = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
     if (!audioRef.current) return;
     if (isPlaying) {
       audioRef.current.pause();
@@ -55,6 +57,8 @@ export default function VoiceMessage({ color, url }: VoiceMessageProps) {
     <div className='flex flex-col gap-1.5 w-full'>
       <div className='flex items-center gap-2'>
         <button
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
           onClick={togglePlay}
           style={{ backgroundColor: `${color}66` }}
           className='rounded-full p-2 cursor-pointer'>

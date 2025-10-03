@@ -13,10 +13,12 @@ const DivWithLongTouch = forwardRef<HTMLDivElement, DivWithLongTouchProps>(
     const threshold = 50;
 
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+      if ((e.target as HTMLElement).closest("[data-ignore-touch]")) return;
       setStartX(e.touches[0].clientX);
     };
 
     const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+      if ((e.target as HTMLElement).closest("[data-ignore-touch]")) return;
       if (translateX > threshold && onSwipe) {
         onSwipe();
         setTranslateX(0);

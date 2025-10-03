@@ -15,7 +15,7 @@ export default function InputHeader({ message, type }: InputHeaderProps) {
   const dispatch = useAppDispatch();
 
   return (
-    <div className='flex items-center md:gap-5 gap-3 px-2 md:px-5 py-1 bg-white rounded-t-md max-w-[768px]'>
+    <div className='flex items-center md:gap-5 gap-3 px-2 md:px-5 py-1 bg-white rounded-t-md max-w-[768px] z-2'>
       {type === "edit" ? (
         <Pencil color='#1da1f2' className='shrink-0' />
       ) : (

@@ -8,7 +8,6 @@ export interface MessageInterface {
   ispinned: boolean;
   reply_to: string | null;
   audio_url?: string;
-  audio_duration?: number;
 }
 
 export interface PinnedMessageInterface {

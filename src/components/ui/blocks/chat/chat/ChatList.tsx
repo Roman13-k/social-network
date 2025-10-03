@@ -18,6 +18,23 @@ export default function ChatList() {
     return getUsersChats({ userId, offset });
   };
 
+  // useEffect(() => {
+  //   const channel = supabase
+  //     .channel("all-chats")
+  //     .on(
+  //       "postgres_changes",
+  //       { event: "*", schema: "public", table: "chats", filter: `` },
+  //       (payload) => {
+  //         console.log("Change received!", payload);
+  //       },
+  //     )
+  //     .subscribe();
+
+  //   return () => {
+  //     supabase.removeChannel(channel);
+  //   };
+  // }, []);
+
   const chatsList = useMemo(
     () =>
       chats.length === 0 && !loading ? (
