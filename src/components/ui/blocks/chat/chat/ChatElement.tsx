@@ -3,8 +3,8 @@ import { ChatInterface } from "@/interfaces/chat";
 import Link from "next/link";
 import React from "react";
 import { useAppSelector } from "@/store/hooks";
-import UserAvatar from "@/components/ui/shared/UserAvatar";
 import P from "@/components/ui/shared/text/P";
+import UserAvarWithOnline from "@/components/ui/shared/UserAvarWithOnline";
 
 export default function ChatElement({ chat }: { chat: ChatInterface }) {
   const curChat = useAppSelector((state) => state.chats.activeChat);
@@ -16,7 +16,8 @@ export default function ChatElement({ chat }: { chat: ChatInterface }) {
       } w-full transition-colors`}
       href={`/chats/${chat.id}`}>
       <div className='flex gap-2 items-center'>
-        <UserAvatar href={chat?.participants?.[0]?.avatar_url} size={40} className='rounded-full' />
+        <UserAvarWithOnline user={chat.participants[0]} />
+
         <div className='flex flex-col gap-1 flex-1 min-w-0'>
           <P>{chat?.participants[0]?.username}</P>
           <P className='truncate' variant='secondary' size='xs'>

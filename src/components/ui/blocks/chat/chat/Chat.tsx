@@ -102,7 +102,7 @@ export default function Chat() {
       supabase.removeChannel(channel);
       dispatch(leaveChat());
     };
-  }, [activeChat, dispatch]);
+  }, [chatId, dispatch]);
 
   return (
     <ChatContainer

@@ -62,7 +62,7 @@ export const getUsersChats = createAsyncThunk<
     ),
     chat_participants (
       user_id,
-      profiles ( id, username, avatar_url )
+      profiles ( id, username, avatar_url, online_at )
     )
   `,
     )
@@ -103,6 +103,41 @@ export const chatsSlice = createSlice({
       state.activeChat = null;
       state.error = null;
     },
+    updateUserOnline: (state, action) => {
+      const onlineUsers: string[] = Object.keys(action.payload);
+
+      const updateParticipants = (participants: (typeof state.chats)[0]["participants"]) => {
+        return participants.map((p) => {
+          const presenceData = action.payload[p.id]?.[0];
+          const isNowOnline = onlineUsers.includes(p.id);
+          const newOnlineAt = presenceData?.online_at || p.online_at || "";
+
+          // обновляем только если есть изменения
+          if (p.isOnline !== isNowOnline || p.online_at !== newOnlineAt) {
+            return { ...p, isOnline: isNowOnline, online_at: newOnlineAt };
+          }
+          return p;
+        });
+      };
+
+      // обновляем все чаты
+      state.chats.forEach((chat) => {
+        chat.participants = updateParticipants(chat.participants);
+      });
+
+      if (state.activeChat) {
+        state.activeChat.participants.forEach((p) => {
+          const presenceData = action.payload[p.id]?.[0];
+          const isNowOnline = onlineUsers.includes(p.id);
+          const newOnlineAt = presenceData?.online_at || p.online_at || "";
+
+          if (p.isOnline !== isNowOnline || p.online_at !== newOnlineAt) {
+            p.isOnline = isNowOnline;
+            p.online_at = newOnlineAt;
+          }
+        });
+      }
+    },
   },
   extraReducers: (builder) => {
     addAsyncCase(builder, getOrCreateNewChat, () => {});
@@ -122,6 +157,6 @@ export const chatsSlice = createSlice({
   },
 });
 
-export const { enterChat, leaveChat } = chatsSlice.actions;
+export const { enterChat, leaveChat, updateUserOnline } = chatsSlice.actions;
 
 export default chatsSlice.reducer;

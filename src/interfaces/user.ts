@@ -25,6 +25,8 @@ export interface UserInterface {
   };
   is_anonymous?: boolean;
   stats: UserStats;
+  online_at: string;
+  isOnline: boolean;
 }
 
 export interface UserStats {
@@ -39,6 +41,8 @@ export interface UserMainInfo {
   avatar_url: string;
   chat_background?: string;
   email?: string;
+  online_at: string;
+  isOnline: boolean;
 }
 
 export interface SettingsRender {

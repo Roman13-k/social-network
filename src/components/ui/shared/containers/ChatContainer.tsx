@@ -25,10 +25,10 @@ export default function ChatContainer({
         wrapper ?? ""
       } w-full rounded-tl-lg md:rounded-tl-none rounded-tr-lg bg-no-repeat bg-center bg-cover relative`}
       style={hasCustomBg ? { backgroundImage: `url(${profile.chat_background})` } : undefined}>
+      <div className={`relative flex flex-col h-full ${className ?? ""} z-10`}>{children}</div>
       {!hasCustomBg && (
-        <div className="absolute inset-0 bg-[url('/chatbg.jpg')] dark:bg-[url('/chatbg_dark.png')] rounded-tr-lg bg-no-repeat bg-center bg-cover" />
+        <div className="z-0 absolute inset-0 bg-[url('/chatbg.jpg')] dark:bg-[url('/chatbg_dark.png')] rounded-tr-lg bg-no-repeat bg-center bg-cover" />
       )}
-      <div className={`flex flex-col h-full ${className ?? ""}`}>{children}</div>
     </div>
   );
 }

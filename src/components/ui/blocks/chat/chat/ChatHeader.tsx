@@ -1,15 +1,16 @@
 "use client";
 import { ChatInterface } from "@/interfaces/chat";
 import { ArrowLeft, Pin, Trash2 } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { deleteChat } from "@/store/redusers/chatsReduser";
 import { useRouter } from "next/navigation";
 import { closePinned, openPinned } from "@/store/redusers/messagesReduser";
-import UserAvatar from "@/components/ui/shared/UserAvatar";
 import P from "@/components/ui/shared/text/P";
 import DeleteDialog from "@/components/ui/shared/dialog/DeleteDialog";
+import UserAvarWithOnline from "@/components/ui/shared/UserAvarWithOnline";
+import { chatDateFormat } from "@/utils/dates/chatDateFormat";
 
 export default function ChatHeader({ activeChat }: { activeChat: ChatInterface | null }) {
   const router = useRouter();
@@ -42,16 +43,21 @@ export default function ChatHeader({ activeChat }: { activeChat: ChatInterface |
         {!isPinnedModal && (
           <>
             <Link href={`/profile/${activeChat?.participants[0].id}`}>
-              <UserAvatar
-                href={activeChat?.participants?.[0]?.avatar_url}
-                size={40}
-                className='rounded-full'
-              />
+              <UserAvarWithOnline user={activeChat?.participants[0]} />
             </Link>
 
             <div>
               <P>{activeChat?.participants[0]?.username}</P>
-              <span className='text-text-secondary text-sm'>was online in NaN</span>
+              <span
+                className={`${
+                  activeChat?.participants[0].isOnline ? "text-button" : "text-text-secondary"
+                }  text-sm`}>
+                {activeChat?.participants[0].isOnline
+                  ? "online"
+                  : activeChat?.participants[0].online_at
+                  ? "was online at " + chatDateFormat(activeChat?.participants[0].online_at)
+                  : "been online for a long time"}
+              </span>
             </div>
 
             <button onClick={() => dispatch(openPinned())} className='ml-auto cursor-pointer'>
