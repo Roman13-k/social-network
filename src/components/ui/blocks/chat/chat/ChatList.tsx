@@ -1,7 +1,7 @@
 "use client";
 import { useAppSelector } from "@/store/hooks";
 import { getUsersChats } from "@/store/redusers/chatsReduser";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import P from "../../../shared/text/P";
 import ChatSkeleton from "../../../shared/skeletons/ChatSkeleton";
 import ChatElement from "./ChatElement";

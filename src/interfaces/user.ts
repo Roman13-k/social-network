@@ -25,8 +25,6 @@ export interface UserInterface {
   };
   is_anonymous?: boolean;
   stats: UserStats;
-  online_at: string;
-  isOnline: boolean;
 }
 
 export interface UserStats {

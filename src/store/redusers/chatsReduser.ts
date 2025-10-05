@@ -111,16 +111,12 @@ export const chatsSlice = createSlice({
           const presenceData = action.payload[p.id]?.[0];
           const isNowOnline = onlineUsers.includes(p.id);
           const newOnlineAt = presenceData?.online_at || p.online_at || "";
-
-          // обновляем только если есть изменения
           if (p.isOnline !== isNowOnline || p.online_at !== newOnlineAt) {
             return { ...p, isOnline: isNowOnline, online_at: newOnlineAt };
           }
           return p;
         });
       };
-
-      // обновляем все чаты
       state.chats.forEach((chat) => {
         chat.participants = updateParticipants(chat.participants);
       });

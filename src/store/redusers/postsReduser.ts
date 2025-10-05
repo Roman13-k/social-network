@@ -1,5 +1,6 @@
 import { ErrorState } from "@/interfaces";
 import { PostInterface } from "@/interfaces/post";
+import { UserMainInfo } from "@/interfaces/user";
 import { supabase } from "@/lib/supabaseClient";
 import { addAsyncCase } from "@/utils/addAsyncCase";
 import { mapAuthError } from "@/utils/mapAuthError";
@@ -67,7 +68,7 @@ export const createNewPost = createAsyncThunk<
     ...post,
     liked_by_user: false,
     viewed_by_user: false,
-    user: Array.isArray(post.user) ? post.user[0] : post.user,
+    user: post.user as unknown as UserMainInfo,
   }));
 });
 
@@ -104,7 +105,7 @@ export const loadPosts = createAsyncThunk<
     ...post,
     viewed_by_user: userId ? post.viewed_by_user.some((view) => view.user_id === userId) : false,
     liked_by_user: userId ? post.liked_by_user.some((like) => like.user_id === userId) : false,
-    user: Array.isArray(post.user) ? post.user[0] : post.user,
+    user: post.user as unknown as UserMainInfo,
   }));
 });
 
@@ -124,7 +125,7 @@ export const getPostById = createAsyncThunk<
     ...data,
     viewed_by_user: userId ? data.viewed_by_user.some((view) => view.user_id === userId) : false,
     liked_by_user: userId ? data.liked_by_user.some((like) => like.user_id === userId) : false,
-    user: Array.isArray(data.user) ? data.user[0] : data.user,
+    user: data.user as unknown as UserMainInfo,
   };
 });
 
@@ -146,7 +147,7 @@ export const loadUserPosts = createAsyncThunk<
     ...post,
     viewed_by_user: userId ? post.viewed_by_user.some((view) => view.user_id === userId) : false,
     liked_by_user: userId ? post.liked_by_user?.some((like) => like.user_id === userId) : false,
-    user: Array.isArray(post.user) ? post.user[0] : post.user,
+    user: post.user as unknown as UserMainInfo,
   }));
 });
 

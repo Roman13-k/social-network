@@ -35,12 +35,11 @@ export default function Messages({
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (isToBootom) bottomRef.current?.scrollIntoView();
-  }, [messages, isToBootom]);
+    if (isToBootom || !isPinned) bottomRef.current?.scrollIntoView();
+  }, [messages, isToBootom, isPinned]);
 
   useEffect(() => {
-    if (messages.length !== 0) dispatch(clearMessages());
-    else if (chatId) {
+    if (chatId) {
       if (isPinned) {
         if (pinOffset !== null && !loading && !error) {
           dispatch(loadPinMessages({ chatId, offset: pinOffset }));
@@ -53,6 +52,10 @@ export default function Messages({
         }
       }
     }
+
+    return () => {
+      dispatch(clearMessages());
+    };
   }, [chatId, isPinned]);
 
   useEffect(() => {

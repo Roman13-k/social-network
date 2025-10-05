@@ -76,10 +76,10 @@ export default function Chat() {
   useEffect(() => {
     if (!chatId || !chats) return;
     dispatch(enterChat(chatId));
-  }, [chatId, chats]);
+  }, [chats, chatId]);
 
   useEffect(() => {
-    if (!activeChat?.id) return;
+    if (!chatId) return;
 
     const channel = supabase
       .channel("public:messages")
@@ -89,7 +89,7 @@ export default function Chat() {
           event: "INSERT",
           schema: "public",
           table: "messages",
-          filter: `chat_id=eq.${activeChat.id}`,
+          filter: `chat_id=eq.${chatId}`,
         },
         (payload) => {
           dispatch(messageReceived(payload.new));
