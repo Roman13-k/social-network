@@ -16,7 +16,6 @@ export default function Online() {
 
     channel.on("presence", { event: "sync" }, () => {
       dispatch(updateUserOnline(channel.presenceState()));
-      console.log(channel.presenceState());
     });
 
     channel.subscribe(async (status) => {

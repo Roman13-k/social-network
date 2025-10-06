@@ -57,9 +57,7 @@ export const getUsersChats = createAsyncThunk<
       `
     id,
     created_at,
-    last_message:messages!last_message_id (
-      *
-    ),
+    last_message,
     chat_participants (
       user_id,
       profiles ( id, username, avatar_url, online_at )
@@ -134,6 +132,14 @@ export const chatsSlice = createSlice({
         });
       }
     },
+    updateChats: (state, action) => {
+      state.chats.forEach((chat) => {
+        if (action.payload.eventType === "UPDATE" && action.payload.new.id === chat.id) {
+          console.log("New: ", action.payload.new.last_message);
+          chat.lastMessage = action.payload.new.last_message;
+        }
+      });
+    },
   },
   extraReducers: (builder) => {
     addAsyncCase(builder, getOrCreateNewChat, () => {});
@@ -153,6 +159,6 @@ export const chatsSlice = createSlice({
   },
 });
 
-export const { enterChat, leaveChat, updateUserOnline } = chatsSlice.actions;
+export const { enterChat, leaveChat, updateUserOnline, updateChats } = chatsSlice.actions;
 
 export default chatsSlice.reducer;

@@ -7,33 +7,18 @@ import ChatSkeleton from "../../../shared/skeletons/ChatSkeleton";
 import ChatElement from "./ChatElement";
 import RenderWithInfinityData from "../../../layout/RenderWithInfinityData";
 import RenderOrError from "../../../layout/RenderOrError";
+import useChatsRealTime from "@/hooks/useChatsRealTime";
 
 export default function ChatList() {
   const { chats, error, loading, offset, activeChat } = useAppSelector((state) => state.chats);
   const userId = useAppSelector((state) => state?.user?.user?.id);
+  useChatsRealTime(userId);
 
   const loadChats = () => {
     if (offset === null || !userId) return;
 
     return getUsersChats({ userId, offset });
   };
-
-  // useEffect(() => {
-  //   const channel = supabase
-  //     .channel("all-chats")
-  //     .on(
-  //       "postgres_changes",
-  //       { event: "*", schema: "public", table: "chats", filter: `` },
-  //       (payload) => {
-  //         console.log("Change received!", payload);
-  //       },
-  //     )
-  //     .subscribe();
-
-  //   return () => {
-  //     supabase.removeChannel(channel);
-  //   };
-  // }, []);
 
   const chatsList = useMemo(
     () =>

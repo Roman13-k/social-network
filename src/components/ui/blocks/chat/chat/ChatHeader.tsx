@@ -1,7 +1,7 @@
 "use client";
 import { ChatInterface } from "@/interfaces/chat";
 import { ArrowLeft, Pin, Trash2 } from "lucide-react";
-import React, { useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { deleteChat } from "@/store/redusers/chatsReduser";
@@ -32,7 +32,7 @@ export default function ChatHeader({ activeChat }: { activeChat: ChatInterface |
             <button className='cursor-pointer' onClick={() => dispatch(closePinned())}>
               <ArrowLeft color='#657786' />
             </button>
-            <P>{pinnedMessages.total_count} Pinned Messages</P>
+            <P>{pinnedMessages.total_count} pinned messages</P>
           </div>
         ) : (
           <Link className='lg:hidden' href={"/chats"}>
