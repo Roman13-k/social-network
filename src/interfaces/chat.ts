@@ -7,3 +7,10 @@ export interface ChatInterface {
   participants: UserMainInfo[];
   lastMessage?: MessageInterface;
 }
+
+export interface ChatParticipantRow {
+  id: string;
+  chat_id: string;
+  user_id: string;
+  joined_at: string;
+}

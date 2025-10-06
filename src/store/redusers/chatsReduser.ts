@@ -132,13 +132,32 @@ export const chatsSlice = createSlice({
         });
       }
     },
-    updateChats: (state, action) => {
+    updateLastMessageChat: (state, action) => {
       state.chats.forEach((chat) => {
         if (action.payload.eventType === "UPDATE" && action.payload.new.id === chat.id) {
-          console.log("New: ", action.payload.new.last_message);
           chat.lastMessage = action.payload.new.last_message;
         }
       });
+    },
+    // need to remade backend
+    updateChats: (state, action) => {
+      const { eventType, new: newData, chatId } = action.payload;
+
+      switch (eventType) {
+        case "INSERT": {
+          console.log("insert chat: ", newData);
+          state.chats.push(newData);
+          break;
+        }
+
+        case "DELETE": {
+          console.log("delete chat: ", chatId);
+          state.chats = state.chats.filter((chat) => chat.id !== chatId);
+          break;
+        }
+        default:
+          break;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -159,6 +178,7 @@ export const chatsSlice = createSlice({
   },
 });
 
-export const { enterChat, leaveChat, updateUserOnline, updateChats } = chatsSlice.actions;
+export const { enterChat, leaveChat, updateUserOnline, updateChats, updateLastMessageChat } =
+  chatsSlice.actions;
 
 export default chatsSlice.reducer;
