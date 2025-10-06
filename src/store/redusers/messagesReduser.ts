@@ -174,6 +174,10 @@ export const messagesSlice = createSlice({
     clearMessages: (state) => {
       state.messages = [];
       state.offset = 0;
+      state.pinOffset = 0;
+      state.pinnedMessages = { messages: [], total_count: 0 };
+      state.loading = false;
+      state.error = null;
     },
     incrOffset: (state) => {
       if (state.offset !== null) state.offset += 1;
@@ -207,14 +211,23 @@ export const messagesSlice = createSlice({
       }
     });
     addAsyncCase(builder, loadPinMessages, (state, action) => {
-      if (action.payload?.messages?.length === 0) {
+      const messages = action.payload?.messages ?? [];
+      const total = action.payload?.total_count ?? 0;
+
+      if (messages.length === 0) {
         state.pinOffset = null;
       } else if (state.pinOffset !== null) {
-        state.pinnedMessages.messages.unshift(...action.payload.messages);
-        state.pinnedMessages.total_count = action.payload.total_count;
-        state.pinOffset += limit;
+        state.pinnedMessages.messages.unshift(...messages);
+        state.pinnedMessages.total_count = total;
+
+        if (messages.length < limit) {
+          state.pinOffset = null;
+        } else {
+          state.pinOffset += limit;
+        }
       }
     });
+
     addAsyncCase(builder, pinMessage, (state, action) => {
       if (!state.pinnedMessages.messages.some((msg) => msg.id === action.payload.id)) {
         state.pinnedMessages.messages.push(action.payload);

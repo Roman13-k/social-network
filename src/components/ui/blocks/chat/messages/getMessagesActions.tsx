@@ -66,13 +66,17 @@ export const getMessageActions = (
       onClick: handleReply,
       textColor: "text-white",
     },
-    {
-      label: "Copy",
-      icon: <Copy />,
-      onClick: handleCopy,
-      textColor: "text-white",
-    },
-    ...(userId === message.sender_id
+    ...(message.content
+      ? [
+          {
+            label: "Copy",
+            icon: <Copy />,
+            onClick: handleCopy,
+            textColor: "text-white",
+          },
+        ]
+      : []),
+    ...(userId === message.sender_id && message.content
       ? [
           {
             label: "Edit",

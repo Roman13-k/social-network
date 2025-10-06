@@ -2,107 +2,30 @@
 import React, { useEffect, useState } from "react";
 import ChatContainer from "../../../shared/containers/ChatContainer";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { enterChat, leaveChat } from "@/store/redusers/chatsReduser";
-import {
-  canselEdit,
-  canselReply,
-  incrOffset,
-  messageReceived,
-  newMessage,
-  newReplyMessage,
-  updateMessage,
-} from "@/store/redusers/messagesReduser";
-import { supabase } from "@/lib/supabaseClient";
+import { enterChat } from "@/store/redusers/chatsReduser";
 import Messages from "../messages/Messages";
 import { usePathname } from "next/navigation";
 import ChatInput from "../input/ChatInput";
 import ChatHeader from "./ChatHeader";
-import { InputModeType } from "@/types/chat";
-import { sendNotification } from "@/app/actions";
+import { useMessagesRealtime } from "@/hooks/useMessagesRealtime";
+import { useChatMessages } from "@/hooks/useChatMessages";
 
 export default function Chat() {
   const path = usePathname();
   const chatId = path.split("/")[2];
-  const [message, setMessage] = useState("");
   const [isToBootom, setIsToBottom] = useState(true);
   const { activeChat, chats } = useAppSelector((state) => state.chats);
   const userId = useAppSelector((state) => state.user.user?.id);
-  const { editingMessage, replyMessage, isPinnedModal, pinnedMessages, messages } = useAppSelector(
-    (state) => state.messages,
-  );
+  const { isPinnedModal, pinnedMessages, messages } = useAppSelector((state) => state.messages);
   const dispatch = useAppDispatch();
 
-  const handleNewMessage = async (type: InputModeType) => {
-    if (!message.trim() || !userId || !activeChat) return;
-    switch (type) {
-      case "edit": {
-        if (editingMessage && editingMessage.content !== message) {
-          await dispatch(updateMessage({ id: editingMessage.id, content: message }));
-        }
-        dispatch(canselEdit());
-        break;
-      }
-      case "reply": {
-        if (replyMessage)
-          await dispatch(
-            newReplyMessage({
-              chat_id: activeChat?.id,
-              sender_id: userId,
-              content: message,
-              id: replyMessage.id,
-            }),
-          );
-        dispatch(canselReply());
-        dispatch(incrOffset());
-        break;
-      }
-      default: {
-        await dispatch(
-          newMessage({ chat_id: activeChat?.id, sender_id: userId, content: message }),
-        );
-        await sendNotification(
-          message,
-          activeChat.participants[0].id,
-          activeChat.participants[0].username,
-          `${process.env.NEXT_PUBLIC_HOST_URL}/chats/${chatId}`,
-        );
-        dispatch(incrOffset());
-        setMessage("");
-        break;
-      }
-    }
-  };
+  const { message, setMessage, handleNewMessage } = useChatMessages(chatId);
+  useMessagesRealtime(setIsToBottom, chatId);
 
   useEffect(() => {
     if (!chatId || !chats) return;
     dispatch(enterChat(chatId));
   }, [chats, chatId]);
-
-  useEffect(() => {
-    if (!chatId) return;
-
-    const channel = supabase
-      .channel("public:messages")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "messages",
-          filter: `chat_id=eq.${chatId}`,
-        },
-        (payload) => {
-          dispatch(messageReceived(payload.new));
-          setIsToBottom(true);
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-      dispatch(leaveChat());
-    };
-  }, [chatId, dispatch]);
 
   return (
     <ChatContainer

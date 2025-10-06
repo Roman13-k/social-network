@@ -22,12 +22,10 @@ export default function InputHeader({ message, type }: InputHeaderProps) {
         <Reply color='#1da1f2' className='shrink-0' />
       )}
 
-      {message.content && (
-        <MessagePreview
-          content={message.content}
-          title={type === "edit" ? "Edit Message" : "Reply Message"}
-        />
-      )}
+      <MessagePreview
+        content={message.content ?? "Voice message"}
+        title={type === "edit" ? "Edit Message" : "Reply Message"}
+      />
 
       <button
         className='cursor-pointer shrink-0'
