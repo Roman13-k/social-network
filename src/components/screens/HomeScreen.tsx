@@ -28,6 +28,8 @@ export default function HomeScreen() {
     <div className='flex flex-col lg:gap-10 md:gap-8 gap-6'>
       {postModal && <NewPostModal setPostModal={setPostModal} handleNewPost={handleNewPost} />}
       <Intro />
+      {/* search for a good model */}
+      {/* <IntroModel /> */}
       <NewPost setPostModal={setPostModal} />
       <Posts />
     </div>
