@@ -10,7 +10,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 - [Redux Toolkit](https://redux-toolkit.js.org/)
 - [Zod](https://zod.dev/)
 - [react-hook-form](https://react-hook-form.com/)
-- [Motion One](https://motion.dev/) in the future
+- [Motion One](https://motion.dev/)
 - [shadcn/ui](https://ui.shadcn.com/)
 - [Supabase](https://supabase.com/)
 - [pnpm](https://pnpm.io)

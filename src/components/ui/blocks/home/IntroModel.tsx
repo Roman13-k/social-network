@@ -30,15 +30,15 @@ function Model() {
   const { scene } = useGLTF("/models/52.glb");
 
   useEffect(() => {
-    gsap.to(scene.rotation, { y: 2 * Math.PI, repeat: -1, duration: 5, ease: "linear" });
+    gsap.to(scene.rotation, { y: 2 * Math.PI, repeat: -1, duration: 15, ease: "linear" });
   }, [scene]);
 
-  return <primitive object={scene} scale={2.5} />;
+  return <primitive object={scene} scale={1.2} />;
 }
 
 export default function IntroModel() {
   return (
-    <div className='h-screen w-full bg-transparent'>
+    <div className='w-[200px] h-[200px]'>
       <Canvas camera={{ position: [0, 1, 3], fov: 50 }}>
         <ambientLight intensity={1} />
         <directionalLight position={[5, 5, 5]} />
