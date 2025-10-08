@@ -13,6 +13,7 @@ import { getUserName } from "@/utils/userGetInfo";
 import { getMessageById, startReply } from "@/store/redusers/messagesReduser";
 import { Pin } from "lucide-react";
 import VoiceMessage from "./VoiceMessage";
+import { motion } from "motion/react";
 
 interface MessageProps {
   message: MessageInterface;
@@ -49,61 +50,67 @@ export default function Message({ message, messagesRef }: MessageProps) {
   }, []);
 
   return (
-    <DivWithLongTouch
-      ref={messageRef}
-      onContextMenu={(e) => handleOpenEditModal(e)}
-      onSwipe={() => dispatch(startReply(message))}
-      onLongTouch={(e) => handleOpenEditModal(e)}
+    <motion.div
       className={`${
         message.sender_id === user?.id ? "bg-white ml-auto" : "bg-button/85"
-      } py-1.5 md:py-2 md:px-4 px-1.5 rounded-[20px] border border-border flex flex-col max-w-full relative`}>
-      {replyMessage.id && replyMessage.content && (
-        <MessagePreview
-          color={message.sender_id === user?.id ? "#1da1f2" : "#9b51e0"}
-          title={
-            replyMessage.sender_id === user?.id
-              ? getUserName(user)
-              : activeChat?.participants[0].username ?? "anonim"
-          }
-          content={replyMessage.content}
-        />
-      )}
-      {message.content && (
-        <RenderContentWithLinks
-          varinant='default'
-          className='break-words whitespace-normal'
-          content={message.content}
-        />
-      )}
+      } py-1.5 md:py-2 md:px-4 px-1.5 rounded-[20px] border border-border flex flex-col max-w-full relative`}
+      initial={{ opacity: 0, y: 40, x: 15, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, x: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 40, x: 15, scale: 0.95 }}
+      transition={{ ease: "easeOut", duration: 0.4 }}>
+      <DivWithLongTouch
+        ref={messageRef}
+        onContextMenu={(e) => handleOpenEditModal(e)}
+        onSwipe={() => dispatch(startReply(message))}
+        onLongTouch={(e) => handleOpenEditModal(e)}>
+        {replyMessage.id && replyMessage.content && (
+          <MessagePreview
+            color={message.sender_id === user?.id ? "#1da1f2" : "#9b51e0"}
+            title={
+              replyMessage.sender_id === user?.id
+                ? getUserName(user)
+                : activeChat?.participants[0].username ?? "anonim"
+            }
+            content={replyMessage.content}
+          />
+        )}
+        {message.content && (
+          <RenderContentWithLinks
+            varinant='default'
+            className='break-words whitespace-normal'
+            content={message.content}
+          />
+        )}
 
-      {message.audio_url && (
-        <VoiceMessage
-          url={message.audio_url}
-          color={message.sender_id === user?.id ? "#1da1f2" : "#9b51e0"}
-        />
-      )}
+        {message.audio_url && (
+          <VoiceMessage
+            url={message.audio_url}
+            color={message.sender_id === user?.id ? "#1da1f2" : "#9b51e0"}
+          />
+        )}
 
-      <span
-        className='self-end text-[14px] text-text-secondary flex items-center'
-        title={chatTitleDateFormat(message.created_at)}>
-        {message.updated ? "edited " : ""}
-        {chatDateFormat(message.created_at)}
-        {message.ispinned && <Pin size={16} className='rotate-20' />}
-      </span>
+        <span
+          className='self-end text-[14px] text-text-secondary flex items-center'
+          title={chatTitleDateFormat(message.created_at)}>
+          {message.updated ? "edited " : ""}
+          {chatDateFormat(message.created_at)}
+          {message.ispinned && <Pin size={16} className='rotate-20' />}
+        </span>
 
-      {isEditingModal && messagesRef.current && (
-        <MessageEditingModal
-          message={message}
-          style={{
-            top: position.y - 120,
-            left:
-              message.sender_id === user?.id
-                ? Math.max(position.x - 130, -100)
-                : Math.min(position.x + 60, messagesRef.current.offsetWidth - 200),
-          }}
-          onClose={() => setIsEditingModal(false)}
-        />
-      )}
-    </DivWithLongTouch>
+        {isEditingModal && messagesRef.current && (
+          <MessageEditingModal
+            message={message}
+            style={{
+              top: position.y - 120,
+              left:
+                message.sender_id === user?.id
+                  ? Math.max(position.x - 130, -100)
+                  : Math.min(position.x + 60, messagesRef.current.offsetWidth - 200),
+            }}
+            onClose={() => setIsEditingModal(false)}
+          />
+        )}
+      </DivWithLongTouch>
+    </motion.div>
   );
 }

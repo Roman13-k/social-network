@@ -14,7 +14,7 @@ export default function NewPost({
 
   return (
     <section className='flex items-center gap-10'>
-      <H2>Create a new post ={">"}</H2>
+      <H2>Create a new post:</H2>
       {user ? (
         <Button variant={"default"} onClick={() => setPostModal(true)} size={"lg"}>
           + New Post

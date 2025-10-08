@@ -21,7 +21,9 @@ export default function HomeScreen() {
     const postId = crypto.randomUUID();
     const image_url = await uploadImages("posts-images", postId, files);
     await dispatch(createNewPost({ content, userId, image_url, postId }));
-    if (!error && !loading) setPostModal(false);
+    if (!error && !loading) {
+      setPostModal(false);
+    }
   };
 
   return (

@@ -23,7 +23,7 @@ export default function Post({ post, type }: { post: PostInterface; type?: Posts
   const { error: commentError } = useAppSelector((state) => state.comments);
   const userId = useAppSelector((state) => state.user.user?.id);
   const loading = useAppSelector((state) => state.posts.loading);
-  const postRef = useRef<null | HTMLLIElement>(null);
+  const postRef = useRef<null | HTMLDivElement>(null);
 
   const handleNewComment = async (content: string) => {
     if (!userId) return;
@@ -44,9 +44,9 @@ export default function Post({ post, type }: { post: PostInterface; type?: Posts
 
   return (
     <>
-      <li
+      <div
         ref={postRef}
-        className='flex items-start lg:px-5 md:px-4 px-3 lg:py-3 py-2 border-border border rounded-md w-full max-w-[650px] transition-all hover:bg-background-secondary/80'>
+        className='post-item flex items-start lg:px-5 md:px-4 px-3 lg:py-3 py-2 border-border border rounded-md w-full max-w-[650px] transition-all hover:bg-background-secondary/80'>
         <Link
           className='md:mr-2 mr-1 cursor-pointer'
           href={userId === post?.user?.id ? "/profile" : `/profile/${post?.user?.id}`}>
@@ -80,7 +80,7 @@ export default function Post({ post, type }: { post: PostInterface; type?: Posts
             <PostViews count={post?.post_views?.[0]?.count ?? 0} />
           </div>
         </div>
-      </li>
+      </div>
       {commentModal && userId && (
         <NewCommentModal handleNewComment={handleNewComment} setCommentModal={setCommentModal} />
       )}
