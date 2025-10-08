@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getOrCreateNewChat } from "@/store/redusers/chatsReduser";
 import { useRouter } from "next/navigation";
 import UserAvatar from "../../shared/UserAvatar";
+import CopyButton from "../../shared/buttons/CopyButton";
 
 export default function UserInfo({ user }: { user: CurrentProfileType }) {
   const router = useRouter();
@@ -33,7 +34,10 @@ export default function UserInfo({ user }: { user: CurrentProfileType }) {
   return (
     <section>
       <div className='flex sm:flex-row flex-col items-center gap-6'>
-        <H1>Hi, {getUserName(user)}</H1>
+        <div className='flex gap-3 items-center'>
+          <H1>Hi, {getUserName(user)}</H1>
+          <CopyButton textToCopy={user?.id ?? ""} />
+        </div>
         {!isUserInterface(user) && (
           <Button
             disabled={loading || !!error || !regProfileId}

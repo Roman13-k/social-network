@@ -11,7 +11,7 @@ function Loader() {
   return (
     <Html center>
       <div className='flex flex-col items-center bg-black/70 p-6 rounded-2xl text-white text-center backdrop-blur-md shadow-lg'>
-        <p className='text-lg font-semibold'>Загрузка модели...</p>
+        <p className='text-lg font-semibold'>Load model...</p>
 
         <div className='w-40 h-2 bg-gray-600 rounded-full mt-3 overflow-hidden'>
           <div
@@ -27,7 +27,7 @@ function Loader() {
 }
 
 function Model() {
-  const { scene } = useGLTF("/models/49.glb");
+  const { scene } = useGLTF("/models/52.glb");
 
   useEffect(() => {
     gsap.to(scene.rotation, { y: 2 * Math.PI, repeat: -1, duration: 5, ease: "linear" });

@@ -7,6 +7,7 @@ import { fetchSession } from "@/store/redusers/userReducer";
 import LoginModal from "../../blocks/login/LoginModal";
 import { Button } from "../../shared/buttons/button";
 import { Menu, X } from "lucide-react";
+import { AnimatePresence } from "motion/react";
 
 export default function Header() {
   const [hover, setHover] = useState(false);
@@ -32,7 +33,9 @@ export default function Header() {
 
   return (
     <>
-      {loginModal && <LoginModal setLoginModal={setLoginModal} />}
+      <AnimatePresence>
+        {loginModal && <LoginModal setLoginModal={setLoginModal} />}
+      </AnimatePresence>
       {/* десктоп */}
       <header
         className={`hidden md:flex flex-col gap-10 py-5 px-4 bg-background-secondary border-border border-r border-y rounded-r-md min-h-screen w-[80px] shrink-0 hover:w-[260px] transition-all   
@@ -52,7 +55,6 @@ export default function Header() {
           <Menu color='white' />
         </Button>
       )}
-
       <header
         className={`${
           burgerMenu ? "scale-100" : "scale-0"

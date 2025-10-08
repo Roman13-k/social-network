@@ -7,6 +7,8 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { createNewPost, setLoading } from "@/store/redusers/postsReduser";
 import Intro from "../ui/blocks/home/Intro";
 import { uploadImages } from "@/utils/uploadImages";
+import { AnimatePresence } from "motion/react";
+// import IntroModel from "../ui/blocks/home/IntroModel";
 
 export default function HomeScreen() {
   const [postModal, setPostModal] = useState(false);
@@ -28,7 +30,9 @@ export default function HomeScreen() {
 
   return (
     <div className='flex flex-col lg:gap-10 md:gap-8 gap-6'>
-      {postModal && <NewPostModal setPostModal={setPostModal} handleNewPost={handleNewPost} />}
+      <AnimatePresence>
+        {postModal && <NewPostModal setPostModal={setPostModal} handleNewPost={handleNewPost} />}
+      </AnimatePresence>
       <Intro />
       {/* search for a good model */}
       {/* <IntroModel /> */}

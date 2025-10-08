@@ -1,4 +1,4 @@
-import ChatList from "@/components/ui/blocks/chat/chat/ChatList";
+import ChatList from "@/components/ui/blocks/chat/chat/chatlist/ChatList";
 import React, { PropsWithChildren } from "react";
 
 export default function ChatLayout({ children }: PropsWithChildren) {

@@ -2,12 +2,13 @@
 import { useAppSelector } from "@/store/hooks";
 import { getUsersChats } from "@/store/redusers/chatsReduser";
 import React, { useMemo } from "react";
-import P from "../../../shared/text/P";
-import ChatSkeleton from "../../../shared/skeletons/ChatSkeleton";
-import ChatElement from "./ChatElement";
-import RenderWithInfinityData from "../../../layout/RenderWithInfinityData";
-import RenderOrError from "../../../layout/RenderOrError";
 import useChatsRealTime from "@/hooks/useChatsRealTime";
+import ChatElement from "./ChatElement";
+import P from "@/components/ui/shared/text/P";
+import RenderWithInfinityData from "@/components/ui/layout/RenderWithInfinityData";
+import RenderOrError from "@/components/ui/layout/RenderOrError";
+import ChatSkeleton from "@/components/ui/shared/skeletons/ChatSkeleton";
+import ChatListHeader from "./ChatListHeader";
 
 export default function ChatList() {
   const { chats, error, loading, offset, activeChat } = useAppSelector((state) => state.chats);
@@ -37,6 +38,7 @@ export default function ChatList() {
       className={`${
         activeChat ? "hidden" : "block w-full"
       } lg:block lg:w-[300px] bg-white rounded-tl-lg min-w-0 shrink-0 px-4 py-5`}>
+      <ChatListHeader />
       <RenderWithInfinityData callback={loadChats} loading={loading}>
         <RenderOrError error={error}>
           {chatsList}
