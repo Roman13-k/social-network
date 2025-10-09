@@ -1,6 +1,6 @@
 "use client";
 import { ChatInterface } from "@/interfaces/chat";
-import { ArrowLeft, Pin, Trash2 } from "lucide-react";
+import { ArrowLeft, Pin, Trash2, UsersRound } from "lucide-react";
 import React from "react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -40,24 +40,34 @@ export default function ChatHeader({ activeChat }: { activeChat: ChatInterface |
           </Link>
         )}
 
-        {!isPinnedModal && (
+        {!isPinnedModal && activeChat && (
           <>
-            <Link href={`/profile/${activeChat?.participants[0].id}`}>
-              <UserAvarWithOnline user={activeChat?.participants[0]} />
-            </Link>
+            {activeChat.participants.length > 1 ? (
+              <UsersRound size={40} />
+            ) : (
+              <Link href={`/profile/${activeChat?.participants[0].id}`}>
+                <UserAvarWithOnline user={activeChat?.participants[0]} />
+              </Link>
+            )}
 
             <div>
-              <P>{activeChat?.participants[0]?.username}</P>
-              <span
-                className={`${
-                  activeChat?.participants[0].isOnline ? "text-button" : "text-text-secondary"
-                }  text-sm`}>
-                {activeChat?.participants[0].isOnline
-                  ? "online"
-                  : activeChat?.participants[0].online_at
-                  ? "was online at " + chatDateFormat(activeChat?.participants[0].online_at)
-                  : "been online for a long time"}
-              </span>
+              <P>{activeChat.name ?? activeChat?.participants[0]?.username}</P>
+              {activeChat.participants.length > 1 ? (
+                <span className='text-text-secondary'>
+                  {activeChat.participants.length + 1} participants
+                </span>
+              ) : (
+                <span
+                  className={`${
+                    activeChat?.participants[0].isOnline ? "text-button" : "text-text-secondary"
+                  }  text-sm`}>
+                  {activeChat?.participants[0].isOnline
+                    ? "online"
+                    : activeChat?.participants[0].online_at
+                    ? "was online at " + chatDateFormat(activeChat?.participants[0].online_at)
+                    : "been online for a long time"}
+                </span>
+              )}
             </div>
 
             <button onClick={() => dispatch(openPinned())} className='ml-auto cursor-pointer'>

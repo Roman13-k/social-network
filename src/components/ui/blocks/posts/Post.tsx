@@ -16,6 +16,7 @@ import PostImages from "./PostImages";
 import PostViews from "./PostViews";
 import { useObserver } from "@/hooks/useObserver";
 import UserAvatar from "../../shared/UserAvatar";
+import { AnimatePresence, motion } from "motion/react";
 
 export default function Post({ post, type }: { post: PostInterface; type?: PostsType }) {
   const [commentModal, setCommentModal] = useState(false);
@@ -23,7 +24,7 @@ export default function Post({ post, type }: { post: PostInterface; type?: Posts
   const { error: commentError } = useAppSelector((state) => state.comments);
   const userId = useAppSelector((state) => state.user.user?.id);
   const loading = useAppSelector((state) => state.posts.loading);
-  const postRef = useRef<null | HTMLDivElement>(null);
+  const postRef = useRef<null | HTMLLIElement>(null);
 
   const handleNewComment = async (content: string) => {
     if (!userId) return;
@@ -43,47 +44,51 @@ export default function Post({ post, type }: { post: PostInterface; type?: Posts
   });
 
   return (
-    <>
-      <div
-        ref={postRef}
-        className='post-item flex items-start lg:px-5 md:px-4 px-3 lg:py-3 py-2 border-border border rounded-md w-full max-w-[650px] transition-all hover:bg-background-secondary/80'>
-        <Link
-          className='md:mr-2 mr-1 cursor-pointer'
-          href={userId === post?.user?.id ? "/profile" : `/profile/${post?.user?.id}`}>
-          <UserAvatar
-            href={post?.user?.avatar_url}
-            size={40}
-            className='rounded-full lg:scale-100 md:scale-95 scale-85'
-          />
+    <motion.li
+      initial={{ opacity: 0, y: -50, scale: 0.75 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -50, scale: 0.75 }}
+      transition={{ ease: "linear", duration: 0.5 }}
+      ref={postRef}
+      className='post-item flex items-start lg:px-5 md:px-4 px-3 lg:py-3 py-2 border-border border rounded-md w-full max-w-[650px] transition-all hover:bg-background-secondary/80'>
+      <Link
+        className='md:mr-2 mr-1 cursor-pointer'
+        href={userId === post?.user?.id ? "/profile" : `/profile/${post?.user?.id}`}>
+        <UserAvatar
+          href={post?.user?.avatar_url}
+          size={40}
+          className='rounded-full lg:scale-100 md:scale-95 scale-85'
+        />
+      </Link>
+
+      <div className='flex-1 flex flex-col md:gap-2 gap-1'>
+        <Link className='flex gap-2 text-[17px] cursor-pointer' href={`/post/${post?.id}`}>
+          <strong className='text-text-primary'>{post?.user?.username}</strong>
+          <P variant={"secondary"}>· {postDateFormat(post?.created_at)}</P>
         </Link>
 
-        <div className='flex-1 flex flex-col md:gap-2 gap-1'>
-          <Link className='flex gap-2 text-[17px] cursor-pointer' href={`/post/${post?.id}`}>
-            <strong className='text-text-primary'>{post?.user?.username}</strong>
-            <P variant={"secondary"}>· {postDateFormat(post?.created_at)}</P>
-          </Link>
+        <RenderContentWithLinks content={profanity.censor(post?.content)} />
+        <PostImages imageUrls={post.image_url} />
 
-          <RenderContentWithLinks content={profanity.censor(post?.content)} />
-          <PostImages imageUrls={post.image_url} />
-
-          <div className='flex items-center w-full gap-6 md:gap-10 font-medium'>
-            <LikeButton
-              user_id={userId}
-              post_id={post.id}
-              count={post?.likes?.[0].count}
-              liked_by_user={post?.liked_by_user}
-            />
-            <CommentButton
-              setCommentModal={setCommentModal}
-              count={post?.comments?.[0]?.count ?? 0}
-            />
-            <PostViews count={post?.post_views?.[0]?.count ?? 0} />
-          </div>
+        <div className='flex items-center w-full gap-6 md:gap-10 font-medium'>
+          <LikeButton
+            user_id={userId}
+            post_id={post.id}
+            count={post?.likes?.[0].count}
+            liked_by_user={post?.liked_by_user}
+          />
+          <CommentButton
+            setCommentModal={setCommentModal}
+            count={post?.comments?.[0]?.count ?? 0}
+          />
+          <PostViews count={post?.post_views?.[0]?.count ?? 0} />
         </div>
       </div>
-      {commentModal && userId && (
-        <NewCommentModal handleNewComment={handleNewComment} setCommentModal={setCommentModal} />
-      )}
-    </>
+      <AnimatePresence>
+        {commentModal && userId && (
+          <NewCommentModal handleNewComment={handleNewComment} setCommentModal={setCommentModal} />
+        )}
+      </AnimatePresence>
+    </motion.li>
   );
 }

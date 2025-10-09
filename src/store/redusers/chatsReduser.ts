@@ -27,14 +27,14 @@ const limit = 5;
 
 export const getOrCreateNewChat = createAsyncThunk<
   string,
-  { userA: string; userB: string },
+  { userA: string; userB: string[]; name?: string },
   { rejectValue: ErrorState }
->("/chats/getOrCreateNewChat", async ({ userA, userB }, { rejectWithValue }) => {
+>("/chats/getOrCreateNewChat", async ({ userA, userB, name }, { rejectWithValue }) => {
   try {
     const res = await fetch("/api/getOrCreateChat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userA, userB }),
+      body: JSON.stringify({ userA, userB, name }),
     });
 
     const data = await res.json();
@@ -57,6 +57,7 @@ export const getUsersChats = createAsyncThunk<
       `
     id,
     created_at,
+    group_name,
     last_message,
     chat_participants (
       user_id,
@@ -71,6 +72,7 @@ export const getUsersChats = createAsyncThunk<
   return data.map((chat) => ({
     id: chat.id,
     created_at: chat.created_at,
+    name: chat.group_name,
     lastMessage: chat.last_message as unknown as MessageInterface | undefined,
     participants: chat.chat_participants
       .map((p) => p.profiles as unknown as UserMainInfo)

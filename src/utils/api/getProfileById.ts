@@ -4,7 +4,7 @@ import { mapAuthError } from "../mapAuthError";
 export async function getUserById(userId: string) {
   const { data, error } = await supabase
     .from("profiles")
-    .select("username")
+    .select("username,id")
     .eq("id", userId)
     .single();
 

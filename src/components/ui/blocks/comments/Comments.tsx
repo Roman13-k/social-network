@@ -6,6 +6,7 @@ import { loadComments, resetComments } from "@/store/redusers/commentsReduser";
 import CommentSkeleton from "../../shared/skeletons/CommentSkeleton";
 import RenderWithInfinityData from "../../layout/RenderWithInfinityData";
 import RenderOrError from "../../layout/RenderOrError";
+import { AnimatePresence } from "motion/react";
 
 export default function Comments({ postId }: { postId: string }) {
   const { comments, loading, offset, error } = useAppSelector((state) => state.comments);
@@ -25,9 +26,11 @@ export default function Comments({ postId }: { postId: string }) {
     <RenderWithInfinityData callback={loadMore} loading={loading}>
       <RenderOrError error={error}>
         <ul className='flex flex-col gap-3 md:gap-5 w-full max-w-[650px]'>
-          {comments.map((comment) => (
-            <Comment key={comment.id} comment={comment} />
-          ))}
+          <AnimatePresence>
+            {comments.map((comment) => (
+              <Comment key={comment.id} comment={comment} />
+            ))}
+          </AnimatePresence>
         </ul>
 
         {loading && (

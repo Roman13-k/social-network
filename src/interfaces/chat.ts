@@ -4,6 +4,7 @@ import { UserMainInfo } from "./user";
 export interface ChatInterface {
   id: string;
   created_at: string;
+  name?: string;
   participants: UserMainInfo[];
   lastMessage?: MessageInterface;
 }

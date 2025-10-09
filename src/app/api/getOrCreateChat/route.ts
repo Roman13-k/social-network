@@ -8,27 +8,27 @@ const supabaseAdmin = createClient(
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { userA, userB } = body;
+  const { userA, userB, name } = body;
 
   if (!userA || !userB) return NextResponse.json({ error: "Missing user ids" }, { status: 400 });
 
   try {
     const { data: existing, error: findError } = await supabaseAdmin.rpc("get_chat_with_users", {
-      user_ids: [userA, userB],
+      user_ids: [userA, ...userB],
     });
     if (findError) throw findError;
     if (existing?.length) return NextResponse.json({ chatId: existing[0].chat_id });
 
     const { data: newChat, error: chatError } = await supabaseAdmin
       .from("chats")
-      .insert({})
+      .insert({ group_name: name })
       .select("id")
       .single();
     if (chatError) throw chatError;
 
     const { error: participantsError } = await supabaseAdmin.rpc("add_chat_participants", {
       c_id: newChat.id,
-      u_ids: [userA, userB],
+      u_ids: [userA, ...userB],
     });
     if (participantsError) throw participantsError;
 

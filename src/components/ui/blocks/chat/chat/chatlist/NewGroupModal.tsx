@@ -18,10 +18,16 @@ import { Button } from "@/components/ui/shared/buttons/button";
 import { Input } from "@/components/ui/shared/inputs/input";
 import { NewGroupSchema, newGroupSchema } from "@/utils/validate/newGroupSheme";
 import { getUserById } from "@/utils/api/getProfileById";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { getOrCreateNewChat } from "@/store/redusers/chatsReduser";
 
 export default function NewGroupModal({ onClose }: { onClose: () => void }) {
   const [count, setCount] = useState(0);
   const [names, setNames] = useState<string[]>([]);
+  const userId = useAppSelector((state) => state.user.user?.id);
+  const { loading, error } = useAppSelector((state) => state.chats);
+
+  const dispatch = useAppDispatch();
 
   const form = useForm<NewGroupSchema>({
     resolver: zodResolver(newGroupSchema),
@@ -29,8 +35,10 @@ export default function NewGroupModal({ onClose }: { onClose: () => void }) {
     mode: "onSubmit",
   });
 
-  const onSubmit = (data: NewGroupSchema) => {
-    console.log("Group data:", data);
+  const onSubmit = async (data: NewGroupSchema) => {
+    if (!userId) return;
+    await dispatch(getOrCreateNewChat({ userA: userId, userB: data.uuids, name: data.name }));
+    if (!loading && !error) onClose();
   };
 
   const handleBlur = async (uuid: string, index: number) => {
@@ -39,7 +47,7 @@ export default function NewGroupModal({ onClose }: { onClose: () => void }) {
       const user = await getUserById(uuid);
       setNames((prev) => {
         const copy = [...prev];
-        copy[index] = user?.username || "Anonim";
+        copy[index] = user?.id === userId ? "Dont add youself" : user?.username || "Anonim";
         return copy;
       });
     } catch (e) {
@@ -68,7 +76,7 @@ export default function NewGroupModal({ onClose }: { onClose: () => void }) {
             <Plus className='h-4 w-4' />
           </Button>
         </div>
-        <span className='text-xs text-muted-foreground'>You can copy UUID in the profile</span>
+        <span className='text-xs text-text-secondary'>You can copy UUID in the profile</span>
       </div>
 
       <Form {...form}>
@@ -95,7 +103,9 @@ export default function NewGroupModal({ onClose }: { onClose: () => void }) {
                 <FormItem>
                   <FormLabel
                     className={`${
-                      names[index] && names[index] !== "User not found" ? "text-button" : ""
+                      names[index] == "User not found" || names[index] == "Dont add youself"
+                        ? "text-red-500"
+                        : names[index] && "text-button"
                     }`}>
                     {names[index]}
                   </FormLabel>
@@ -103,7 +113,9 @@ export default function NewGroupModal({ onClose }: { onClose: () => void }) {
                     <Input
                       {...field}
                       className={`${
-                        names[index] && names[index] !== "User not found" ? "border-button" : ""
+                        names[index] == "User not found" || names[index] == "Dont add youself"
+                          ? "border-red-500"
+                          : names[index] && "border-button"
                       }`}
                       onBlur={() => {
                         handleBlur(field.value, index);
@@ -117,7 +129,11 @@ export default function NewGroupModal({ onClose }: { onClose: () => void }) {
             />
           ))}
 
-          <Button disabled={count === 0} type='submit' variant='secondary'>
+          <Button
+            loading={loading}
+            disabled={count === 0 || names.includes("Dont add youself") || !!error}
+            type='submit'
+            variant='secondary'>
             Create group
           </Button>
         </form>

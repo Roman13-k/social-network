@@ -10,6 +10,7 @@ import { loadUserComments, resetComments } from "@/store/redusers/commentsReduse
 import RenderWithInfinityData from "../../layout/RenderWithInfinityData";
 import P from "../../shared/text/P";
 import { DataVariantsType } from "@/types/profile";
+import { AnimatePresence } from "motion/react";
 
 export default function SelectedData({ selectedVariant }: { selectedVariant: DataVariantsType }) {
   const { loading, userLikedPosts, userLikedOffset, userOffset, userPosts } = useAppSelector(
@@ -34,10 +35,6 @@ export default function SelectedData({ selectedVariant }: { selectedVariant: Dat
     };
   }, [dispatch]);
 
-  useEffect(() => {
-    console.log(userLikedPosts);
-  }, [userLikedPosts]);
-
   return (
     <RenderWithInfinityData
       callback={loadData}
@@ -45,29 +42,33 @@ export default function SelectedData({ selectedVariant }: { selectedVariant: Dat
         selectedVariant === "posts" || selectedVariant === "likedPosts" ? loading : commentsLoading
       }>
       <ul className='flex flex-col items-center gap-3 md:gap-5 w-full'>
-        {selectedVariant === "posts"
-          ? userPosts.length > 0
-            ? userPosts.map((post) => <Post key={post.id} post={post} type='userPosts' />)
-            : !loading && (
+        <AnimatePresence>
+          {selectedVariant === "posts"
+            ? userPosts.length > 0
+              ? userPosts.map((post) => <Post key={post.id} post={post} type='userPosts' />)
+              : !loading && (
+                  <li>
+                    <P variant={"secondary"}>No posts</P>
+                  </li>
+                )
+            : selectedVariant === "likedPosts"
+            ? userLikedPosts.length > 0
+              ? userLikedPosts.map((post) => (
+                  <Post key={post.id} post={post} type='userLikedPosts' />
+                ))
+              : !loading && (
+                  <li>
+                    <P variant={"secondary"}>No liked posts</P>
+                  </li>
+                )
+            : comments.length > 0
+            ? comments.map((com) => <Comment comment={com} key={com.id} />)
+            : !commentsLoading && (
                 <li>
-                  <P variant={"secondary"}>No posts</P>
+                  <P variant={"secondary"}>No comments</P>
                 </li>
-              )
-          : selectedVariant === "likedPosts"
-          ? userLikedPosts.length > 0
-            ? userLikedPosts.map((post) => <Post key={post.id} post={post} type='userLikedPosts' />)
-            : !loading && (
-                <li>
-                  <P variant={"secondary"}>No liked posts</P>
-                </li>
-              )
-          : comments.length > 0
-          ? comments.map((com) => <Comment comment={com} key={com.id} />)
-          : !commentsLoading && (
-              <li>
-                <P variant={"secondary"}>No comments</P>
-              </li>
-            )}
+              )}
+        </AnimatePresence>
       </ul>
 
       <ul className='flex flex-col gap-3 md:gap-5 w-full max-w-[650px]'>

@@ -10,12 +10,12 @@ import { AnimatePresence } from "motion/react";
 
 interface MessagesListProps {
   messages: MessageInterface[];
-  userId: string | undefined;
   messagesRef: React.RefObject<HTMLDivElement | null>;
 }
 
-export default function MessagesList({ messages, userId, messagesRef }: MessagesListProps) {
+export default function MessagesList({ messages, messagesRef }: MessagesListProps) {
   const activeChat = useAppSelector((s) => s.chats.activeChat);
+  const user = useAppSelector((state) => state.user.user);
 
   return useMemo(() => {
     let lastDate = "";
@@ -31,7 +31,7 @@ export default function MessagesList({ messages, userId, messagesRef }: Messages
             if (activeChat && activeChat?.participants?.length > 1) {
               const next = messages[index + 1];
               showFooter =
-                message.sender_id !== userId && (!next || next.sender_id !== message.sender_id);
+                message.sender_id !== user?.id && (!next || next.sender_id !== message.sender_id);
             }
 
             return (
@@ -46,12 +46,17 @@ export default function MessagesList({ messages, userId, messagesRef }: Messages
 
                 <li
                   className={`${
-                    message.sender_id === userId ? "self-end" : "self-start"
+                    message.sender_id === user?.id ? "self-end" : "self-start"
                   } flex gap-2 w-full relative max-w-[85%]`}>
                   {showFooter && (
                     <Image
                       className='rounded-full self-end absolute top-1/2 left-[-50px]'
-                      src={activeChat?.participants[0].avatar_url ?? "/default-avatar.png"}
+                      src={
+                        message.sender_id === user?.id
+                          ? user.user_metadata.avatar_url ?? "/default-avatar.png"
+                          : activeChat?.participants.find((p) => p.id === message.sender_id)
+                              ?.avatar_url ?? "/default-avatar.png"
+                      }
                       alt='avatar'
                       width={40}
                       height={40}

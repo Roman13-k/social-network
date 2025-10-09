@@ -9,7 +9,6 @@ import { useMessagesLogic } from "@/hooks/useMessagesLogic";
 
 interface MessagesProps {
   messages: MessageInterface[];
-  userId: string | undefined;
   chatId: string | undefined;
   isToBootom: boolean;
   setIsToBottom: Dispatch<SetStateAction<boolean>>;
@@ -17,7 +16,6 @@ interface MessagesProps {
 }
 
 export default function Messages({
-  userId,
   chatId,
   isToBootom,
   setIsToBottom,
@@ -36,7 +34,7 @@ export default function Messages({
       ref={messagesRef}
       className='h-full flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200 px-3 md:px-6 lg:px-8'>
       <RenderOrError error={error}>
-        <MessagesList messages={messages} messagesRef={messagesRef} userId={userId} />
+        <MessagesList messages={messages} messagesRef={messagesRef} />
         {loading && messages.length === 0 && (
           <div className='flex flex-col items-start gap-4 max-w-[768px] w-full mx-auto min-w-0'>
             <MessageSkeleton />

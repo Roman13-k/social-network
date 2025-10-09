@@ -15,7 +15,6 @@ export default function Chat() {
   const chatId = path.split("/")[2];
   const [isToBootom, setIsToBottom] = useState(true);
   const { activeChat, chats } = useAppSelector((state) => state.chats);
-  const userId = useAppSelector((state) => state.user.user?.id);
   const { isPinnedModal, pinnedMessages, messages } = useAppSelector((state) => state.messages);
   const dispatch = useAppDispatch();
 
@@ -35,7 +34,6 @@ export default function Chat() {
       <Messages
         isPinned={isPinnedModal}
         messages={isPinnedModal ? pinnedMessages.messages : messages}
-        userId={userId}
         chatId={activeChat?.id}
         isToBootom={isToBootom}
         setIsToBottom={setIsToBottom}

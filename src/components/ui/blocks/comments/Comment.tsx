@@ -11,6 +11,7 @@ import { updateCommentsCout } from "@/store/redusers/postsReduser";
 import { profanity } from "@/lib/profanity";
 import RenderContentWithLinks from "../../layout/RenderContentWithLinks";
 import UserAvatar from "../../shared/UserAvatar";
+import { motion } from "motion/react";
 
 export default function Comment({ comment }: { comment: CommentInterface }) {
   const dispatch = useAppDispatch();
@@ -22,7 +23,12 @@ export default function Comment({ comment }: { comment: CommentInterface }) {
   };
 
   return (
-    <li className='flex items-start md:px-5 px-3 md:py-3 py-2 border-border border rounded-md w-full max-w-[650px] transition-all hover:bg-background-secondary/80'>
+    <motion.li
+      initial={{ opacity: 0, y: -50, scale: 0.75 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -50, scale: 0.75 }}
+      transition={{ ease: "easeOut", duration: 0.5 }}
+      className='flex items-start md:px-5 px-3 md:py-3 py-2 border-border border rounded-md w-full max-w-[650px] transition-all hover:bg-background-secondary/80'>
       <Link
         href={userId === comment.user_id ? "/profile" : `/profile/${comment.user_id}`}
         className='mr-2'>
@@ -50,6 +56,6 @@ export default function Comment({ comment }: { comment: CommentInterface }) {
         </div>
         <RenderContentWithLinks content={profanity.censor(comment?.content)} />
       </div>
-    </li>
+    </motion.li>
   );
 }
