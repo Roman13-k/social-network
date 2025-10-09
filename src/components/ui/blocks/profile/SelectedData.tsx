@@ -11,6 +11,7 @@ import RenderWithInfinityData from "../../layout/RenderWithInfinityData";
 import P from "../../shared/text/P";
 import { ProfileDataVariants } from "@/interfaces/profile";
 import UserSettings from "./settings/UserSettings";
+import YouTubeMusicPlayer from "../../shared/music/YoutubePlayer";
 
 export default function SelectedData({
   selectedVariant,
@@ -43,6 +44,13 @@ export default function SelectedData({
     return (
       <div className='w-full flex justify-center'>
         <UserSettings />
+      </div>
+    );
+
+  if (selectedVariant.name === "music")
+    return (
+      <div className='w-full flex justify-center'>
+        <YouTubeMusicPlayer />
       </div>
     );
 
