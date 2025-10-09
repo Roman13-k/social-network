@@ -1,6 +1,6 @@
 "use client";
 import React, { useRef, useState } from "react";
-import YouTube from "react-youtube";
+import YouTube, { YouTubeEvent, YouTubePlayer } from "react-youtube";
 
 const playlist = [
   { id: "dQw4w9WgXcQ", title: "Rick Astley – Never Gonna Give You Up" },
@@ -10,7 +10,7 @@ const playlist = [
 
 export default function YouTubeMusicPlayer() {
   const [current, setCurrent] = useState(0);
-  const playerRef = useRef<any>(null);
+  const playerRef = useRef<null | YouTubePlayer.Player>(null);
 
   const opts = {
     height: "0",
@@ -18,7 +18,7 @@ export default function YouTubeMusicPlayer() {
     playerVars: { autoplay: 0, controls: 0 },
   };
 
-  const onReady = (event: any) => {
+  const onReady = (event: YouTubeEvent) => {
     playerRef.current = event.target;
   };
 
