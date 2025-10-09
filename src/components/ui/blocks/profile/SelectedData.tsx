@@ -9,10 +9,14 @@ import Comment from "../comments/Comment";
 import { loadUserComments, resetComments } from "@/store/redusers/commentsReduser";
 import RenderWithInfinityData from "../../layout/RenderWithInfinityData";
 import P from "../../shared/text/P";
-import { DataVariantsType } from "@/types/profile";
-import { AnimatePresence } from "motion/react";
+import { ProfileDataVariants } from "@/interfaces/profile";
+import UserSettings from "./settings/UserSettings";
 
-export default function SelectedData({ selectedVariant }: { selectedVariant: DataVariantsType }) {
+export default function SelectedData({
+  selectedVariant,
+}: {
+  selectedVariant: ProfileDataVariants;
+}) {
   const { loading, userLikedPosts, userLikedOffset, userOffset, userPosts } = useAppSelector(
     (state) => state.posts,
   );
@@ -21,11 +25,11 @@ export default function SelectedData({ selectedVariant }: { selectedVariant: Dat
   const dispatch = useAppDispatch();
 
   const loadData = () => {
-    if (selectedVariant === "posts" && userOffset !== null) {
+    if (selectedVariant.name === "posts" && userOffset !== null) {
       return loadUserPosts({ userId, offset: userOffset });
-    } else if (selectedVariant === "likedPosts" && userLikedOffset !== null) {
+    } else if (selectedVariant.name === "likedPosts" && userLikedOffset !== null) {
       return loadUserLikedPosts({ userId, offset: userLikedOffset });
-    } else if (offset !== null && selectedVariant == "comments")
+    } else if (offset !== null && selectedVariant.name == "comments")
       return loadUserComments({ userId, offset });
   };
 
@@ -35,40 +39,45 @@ export default function SelectedData({ selectedVariant }: { selectedVariant: Dat
     };
   }, [dispatch]);
 
+  if (selectedVariant.name === "settings")
+    return (
+      <div className='w-full flex justify-center'>
+        <UserSettings />
+      </div>
+    );
+
   return (
     <RenderWithInfinityData
       callback={loadData}
       loading={
-        selectedVariant === "posts" || selectedVariant === "likedPosts" ? loading : commentsLoading
+        selectedVariant.name === "posts" || selectedVariant.name === "likedPosts"
+          ? loading
+          : commentsLoading
       }>
       <ul className='flex flex-col items-center gap-3 md:gap-5 w-full'>
-        <AnimatePresence>
-          {selectedVariant === "posts"
-            ? userPosts.length > 0
-              ? userPosts.map((post) => <Post key={post.id} post={post} type='userPosts' />)
-              : !loading && (
-                  <li>
-                    <P variant={"secondary"}>No posts</P>
-                  </li>
-                )
-            : selectedVariant === "likedPosts"
-            ? userLikedPosts.length > 0
-              ? userLikedPosts.map((post) => (
-                  <Post key={post.id} post={post} type='userLikedPosts' />
-                ))
-              : !loading && (
-                  <li>
-                    <P variant={"secondary"}>No liked posts</P>
-                  </li>
-                )
-            : comments.length > 0
-            ? comments.map((com) => <Comment comment={com} key={com.id} />)
-            : !commentsLoading && (
+        {selectedVariant.name === "posts"
+          ? userPosts.length > 0
+            ? userPosts.map((post) => <Post key={post.id} post={post} type='userPosts' />)
+            : !loading && (
                 <li>
-                  <P variant={"secondary"}>No comments</P>
+                  <P variant={"secondary"}>No posts</P>
                 </li>
-              )}
-        </AnimatePresence>
+              )
+          : selectedVariant.name === "likedPosts"
+          ? userLikedPosts.length > 0
+            ? userLikedPosts.map((post) => <Post key={post.id} post={post} type='userLikedPosts' />)
+            : !loading && (
+                <li>
+                  <P variant={"secondary"}>No liked posts</P>
+                </li>
+              )
+          : comments.length > 0
+          ? comments.map((com) => <Comment comment={com} key={com.id} />)
+          : !commentsLoading && (
+              <li>
+                <P variant={"secondary"}>No comments</P>
+              </li>
+            )}
       </ul>
 
       <ul className='flex flex-col gap-3 md:gap-5 w-full max-w-[650px]'>

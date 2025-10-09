@@ -1,1 +1,1 @@
-export type DataVariantsType = "posts" | "likedPosts" | "comments";
+export type DataVariantsType = "posts" | "likedPosts" | "comments" | "settings";

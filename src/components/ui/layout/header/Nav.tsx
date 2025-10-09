@@ -1,4 +1,4 @@
-import { navData } from "@/utils/nav";
+import { navData } from "@/utils/data/nav";
 import Image from "next/image";
 import Link from "next/link";
 import React, { Dispatch, SetStateAction } from "react";

@@ -1,4 +1,4 @@
-import { navData } from "@/utils/nav";
+import { navData } from "@/utils/data/nav";
 import Link from "next/link";
 import React from "react";
 import MainContainer from "../../shared/containers/MainContainer";

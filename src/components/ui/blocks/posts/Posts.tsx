@@ -21,11 +21,9 @@ export default function Posts() {
     <RenderWithInfinityData loading={postLoading || loading} callback={() => loadMore()}>
       <RenderOrError error={error}>
         <ul className='flex flex-col items-center gap-3 md:gap-5 w-full'>
-          <AnimatePresence>
-            {posts?.map((post) => (
-              <Post key={post.id} post={post} type={"posts"} />
-            ))}
-          </AnimatePresence>
+          {posts?.map((post) => (
+            <Post key={post.id} post={post} type={"posts"} />
+          ))}
         </ul>
 
         {postLoading && (

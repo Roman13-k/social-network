@@ -1,24 +1,26 @@
 "use client";
 import React, { Dispatch, SetStateAction } from "react";
-import { variants } from "./UserInfluence";
-import { DataVariantsType } from "@/types/profile";
+import { variants } from "@/utils/data/profile";
+import { ProfileDataVariants } from "@/interfaces/profile";
 
 interface VariantsProps {
-  selectedVariant: DataVariantsType;
-  setSelectedVariant: Dispatch<SetStateAction<DataVariantsType>>;
+  selectedVariant: ProfileDataVariants;
+  setSelectedVariant: Dispatch<SetStateAction<ProfileDataVariants>>;
 }
 
 export default function Variants({ selectedVariant, setSelectedVariant }: VariantsProps) {
   return (
-    <div className='flex w-full max-w-[650px]'>
+    <div className='flex flex-col items-start'>
       {variants.map((v, index) => (
         <button
           onClick={() => setSelectedVariant(v)}
-          className={`flex-grow-1 border border-border lg:px-10 md:px-6 px-1 lg:py-4 md:py-2 py-1 text-text-primary lg:text-2xl text-xl hover:bg-background-secondary/60 sm:uppercase ${
-            selectedVariant === v ? "bg-background-secondary" : ""
+          className={` px-1 py-1 lg:text-2xl text-xl hover:underline hover:text-accent/60 hover:decoration-accent/60 transition-all whitespace-nowrap ${
+            selectedVariant.name === v.name
+              ? "text-accent decoration-accent underline underline-offset-3"
+              : "text-text-primary"
           } cursor-pointer`}
           key={index}>
-          {v}
+          {v.displayName}
         </button>
       ))}
     </div>

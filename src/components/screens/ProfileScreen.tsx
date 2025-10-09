@@ -9,7 +9,6 @@ import ProfileSkeleton from "../ui/shared/skeletons/ProfileSkeleton";
 import UserInfo from "../ui/blocks/profile/UserInfo";
 import UserInfluence from "../ui/blocks/profile/UserInfluence";
 import { isUserInterface } from "@/types/user";
-import UserSettings from "../ui/blocks/profile/settings/UserSettings";
 import RenderOrError from "../ui/layout/RenderOrError";
 
 export default function ProfileScreen() {
@@ -43,7 +42,6 @@ export default function ProfileScreen() {
             <>
               <div className='flex lg:flex-row flex-col gap-6 justify-between w-full'>
                 <UserInfo user={currentProfile} />
-                {isOwnProfile && <UserSettings />}
               </div>
               {isOwnProfile && (
                 <DeleteDialog
