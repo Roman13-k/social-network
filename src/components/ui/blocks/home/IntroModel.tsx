@@ -33,7 +33,7 @@ function Model() {
     gsap.to(scene.rotation, { y: 2 * Math.PI, repeat: -1, duration: 15, ease: "linear" });
   }, [scene]);
 
-  return <primitive object={scene} scale={1.2} />;
+  return <primitive object={scene} scale={1.8} />;
 }
 
 export default function IntroModel() {
@@ -41,9 +41,14 @@ export default function IntroModel() {
     <div className='w-[200px] h-[200px]'>
       <Canvas camera={{ position: [0, 1, 3], fov: 50 }}>
         <ambientLight intensity={1} />
-        <directionalLight position={[5, 5, 5]} />
+        <directionalLight />
         <Model />
-        <OrbitControls />
+        <OrbitControls
+          enableZoom={false}
+          enablePan={false}
+          maxPolarAngle={Math.PI / 2}
+          minPolarAngle={Math.PI / 2}
+        />
         <Loader />
       </Canvas>
     </div>
